@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+#
+
+# User
+if [ "$USER" != "$(whoami)" ]; then
+  USER=$(whoami)
+fi
+
+export PATH="/usr/local/bin:/usr/local/sbin:$BASH_DIR/scripts-common:$BASH_DIR/scripts-local:$PATH"
+
