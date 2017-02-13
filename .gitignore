@@ -1,3 +1,7 @@
+#Swap ignored files 
+
+*/**/*.swp
+
 #MACOSX ignored files
 
 *.DS_Store
