@@ -1,0 +1,26 @@
+#!/bin/bash
+#
+# Refactor all this loose binaries
+
+#
+# Common Binnaries
+export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH";
+#
+# RVM - ruby version manager 
+export PATH="$PATH:$HOME/.rvm/bin";
+#
+# Postgres 
+export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin
+#
+# Sublime
+export PATH=$PATH:"/Applications/Sublime Text.app/Contents/SharedSupport/bin"
+#
+# MongoDB
+export PATH=$PATH:/Users/sauloxd/mongodb/bin
+#
+# Redis Binary 
+export PATH="$PATH:/Users/sauloxd/redis-3.2.3/src"
+#
+# Chrome drivers
+export PATH="$PATH:/Users/sauloxd/chromedrivers"
+

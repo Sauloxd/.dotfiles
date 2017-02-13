@@ -1,26 +1,46 @@
 " Welcome to the Saulo's Script!
 set number
 set numberwidth=1
+set ruler
+set wrap
+set textwidth=79
+set formatoptions=tcqrn1
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
+set expandtab
+set noshiftround
+set scrolloff=3
+set ttyfast
+set laststatus=2
+set showmode
+set showcmd
+set listchars=tab:▸\ ,eol:¬
+syntax on
 
-:let mapleader = "\<Space>"
-:let maplocalleader = "\\"
+let mapleader = "\<Space>"
+let maplocalleader = "\\"
 
 " MAPPINGs
-
-:noremap <leader>\ :NERDTreeToggle<CR>
-:noremap <leader>j :wincmd j<cr>
-:noremap <leader>h :wincmd h<cr>
-:noremap <leader>k :wincmd k<cr>
-:noremap <leader>l :wincmd l<cr>
-
+nnoremap j gj
+nnoremap k gk
+noremap <leader>\ :NERDTreeToggle<CR>
+noremap <leader>j :wincmd j<cr>
+noremap <leader>h :wincmd h<cr>
+noremap <leader>k :wincmd k<cr>
+noremap <leader>l :wincmd l<cr>
+" Visual Mappings
+vnoremap <F1> :set invfullscreen<CR>
 " Normal Mappings
-
-:nnoremap <leader>ev :vsplit $MYVIMRC<cr>
-:nnoremap <leader>sv :source $MYVIMRC<cr>
+nnoremap <F1> :set invfullscreen<CR>
+nnoremap <leader>ev :vsplit $MYVIMRC<cr>
+nnoremap <leader>sv :source $MYVIMRC<cr>
+" Inser Mappings
+inoremap <F1> <ESC>:set invfullscreen<CR>a
 
 "Abbreviations
 
-:iabbrev @@    saulotoshi@gmail.com
+iabbrev @@    saulotoshi@gmail.com
 
 " Colors Scheme
 set background=dark
@@ -31,7 +51,7 @@ colorscheme quantum
 
 
 
-
+      
 "My Plugins
 
 call plug#begin()
