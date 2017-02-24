@@ -30,10 +30,3 @@ else
 fi
 
 export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
-
-# Case-insensitive globbing (used in pathname expansion)
-setopt -s nocaseglob;
-
-# Autocorrect typos in path names when using `cd`
-setopt -s cdspell;
-

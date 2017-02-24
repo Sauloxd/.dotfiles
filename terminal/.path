@@ -23,4 +23,10 @@ export PATH="$PATH:/Users/sauloxd/redis-3.2.3/src"
 #
 # Chrome drivers
 export PATH="$PATH:/Users/sauloxd/chromedrivers"
+#
+# Maven
+export PATH="$PATH:/Users/sauloxd/Applications/apache-maven-3.3.9/bin"
+#
+# PSQL
+export PATH="$PATH:/Applications/Postgres.app/Contents/Versions/9.5/bin"
 
