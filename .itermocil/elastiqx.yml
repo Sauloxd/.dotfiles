@@ -1,0 +1,8 @@
+windows:
+  - name: elastiqx
+    root: ~/Project/trampo/elastiqx/elastiqx-collector
+    layout: double-main-vertical
+    panes:
+      - mongod
+      - git status
+      - IS_PRODUCTION=true SERVER_NAME=localhost npm start

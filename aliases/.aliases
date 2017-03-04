@@ -1,0 +1,23 @@
+#!/bin/bash
+alias vv="nvim ~/.dotfiles/vim/init.vim"
+alias ss="source ~/.dotfiles/terminal/.bash_profile"
+
+#GIT ALIASES
+alias gh="git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all"
+alias gap="g add -p"
+alias gdfile="git diff-tree --no-commit-id --name-only -r"
+
+
+#MAC Aliases
+alias vim="nvi"
+alias qr="cd ~/.itermocil; itermocil qr;cd ~"
+alias elastiqx="cd ~/.itermocil; itermocil elastiqx; cd ~"
+
+
+#SPOTIFY ALIASES
+alias fritar="spotify play uri spotify:user:spotify:playlist:67nMZWgcUxNa5uaiyLDR2x"
+
+#QR aliases
+alias addqrfonts="g add app/assets/fonts/qulture-icon.eot app/assets/fonts/qulture-icon.svg app/assets/fonts/qulture-icon.ttf app/assets/fonts/qulture-icon.woff app/assets/fonts/qulture-icon.woff2"
+
+
