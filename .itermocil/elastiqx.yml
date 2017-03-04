@@ -1,6 +1,6 @@
 windows:
   - name: elastiqx
-    root: ~/Project/my-projects/ddux-poc
+    root: ~/Project/trampo/elastiqx/elastiqx-collector
     layout: double-main-vertical
     panes:
       - mongod

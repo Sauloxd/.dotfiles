@@ -28,4 +28,6 @@ export PATH="$PATH:/Users/sauloxd/Applications/apache-maven-3.3.9/bin";
 #
 # PSQL
 export PATH="$PATH:/Applications/Postgres.app/Contents/Versions/9.5/bin";
-
+#
+# RACKET
+export PATH="$PATH:/Applications/Racket v6.8/bin";

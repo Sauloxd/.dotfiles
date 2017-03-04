@@ -1,7 +1,6 @@
 #!/bin/bash
 #
 #
-
 # User
 if [ "$USER" != "$(whoami)" ]; then
   USER=$(whoami)

@@ -17,6 +17,7 @@ set laststatus=2
 set showmode
 set showcmd
 set listchars=tab:▸\ ,eol:¬
+set noswapfile
 syntax on
 
 let mapleader = "\<Space>"
@@ -31,16 +32,15 @@ noremap <leader>k :wincmd k<cr>
 noremap <leader>l :wincmd l<cr>
 noremap <leader><s-j> gT
 noremap <leader><s-k> gt
+
 " Visual Mappings
-vnoremap <F1> :set invfullscreen<CR>
+"
 " Normal Mappings
 nnoremap j gj
 nnoremap k gk
-nnoremap <F1> :set invfullscreen<CR>
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 nnoremap <leader>sv :source $MYVIMRC<cr>
-" Inser Mappings
-inoremap <F1> <ESC>:set invfullscreen<CR>a
+" Insert Mappings
 
 "Abbreviations
 
@@ -50,11 +50,6 @@ iabbrev @@    saulotoshi@gmail.com
 set background=dark
 colorscheme quantum
 
-
-
-
-
-
       
 "My Plugins
 
@@ -62,7 +57,8 @@ call plug#begin()
 
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'pangloss/vim-javascript'
-Plug 'ervandew/screen'
+Plug 'simeji/winresizer'
+Plug 'tpope/vim-surround'
 
 call plug#end()
 
