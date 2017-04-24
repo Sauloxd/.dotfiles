@@ -31,3 +31,10 @@ export PATH="$PATH:/Applications/Postgres.app/Contents/Versions/9.5/bin";
 #
 # RACKET
 export PATH="$PATH:/Applications/Racket v6.8/bin";
+#
+# Android Studio
+export PATH="$PATH:/Users/sauloxd/Library/Android/sdk/platform-tools";
+export PATH="$PATH:/Users/sauloxd/Library/Android/sdk/tools";
+#
+# WineHQ
+export PATH=$PATH:"/Applications/Wine Stable.app/Contents/Resources/wine/bin";

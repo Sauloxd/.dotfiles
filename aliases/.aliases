@@ -9,7 +9,7 @@ alias gdfile="git diff-tree --no-commit-id --name-only -r"
 
 
 #MAC Aliases
-alias vim="nvi"
+alias vim="nvim"
 alias qr="cd ~/.itermocil; itermocil qr;cd ~"
 alias elastiqx="cd ~/.itermocil; itermocil elastiqx; cd ~"
 
@@ -19,5 +19,4 @@ alias fritar="spotify play uri spotify:user:spotify:playlist:67nMZWgcUxNa5uaiyLD
 
 #QR aliases
 alias addqrfonts="g add app/assets/fonts/qulture-icon.eot app/assets/fonts/qulture-icon.svg app/assets/fonts/qulture-icon.ttf app/assets/fonts/qulture-icon.woff app/assets/fonts/qulture-icon.woff2"
-
 
