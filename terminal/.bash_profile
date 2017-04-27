@@ -3,6 +3,8 @@
 #Inspired by https://github.com/mathiasbynens/dotfiles
 #Sourcing files, ORDER matters.
 
+source ~/development/revmob/setup/.bash_profile
+
 for file in $HOME/.dotfiles/terminal/.{variables,path,exports,functions,extra}; do
 	[ -r "$file" ] && [ -f "$file" ] && source "$file";
 done;
