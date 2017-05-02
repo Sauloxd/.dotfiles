@@ -3,6 +3,12 @@
 #Inspired by https://github.com/mathiasbynens/dotfiles
 #Sourcing files, ORDER matters.
 
+#source ~/development/revmob/setup/.bash_profile
+
+source ~/development/revmobads/bashScripts/shell/mfa.sh
+source ~/development/revmobads/bashScripts/shell/devenv.sh
+source ~/development/revmobads/bashScripts/shell/tester.sh
+
 for file in $HOME/.dotfiles/terminal/.{variables,path,exports,functions,extra}; do
 	[ -r "$file" ] && [ -f "$file" ] && source "$file";
 done;
@@ -21,3 +27,4 @@ unset file;
 if type _git &> /dev/null && [ -f /usr/local/etc/bash_completion.d/git-completion.bash ]; then
 	complete -o default -o nospace -F _git g;
 fi;
+

@@ -1,3 +1,5 @@
+#TODO: Load scripts so ZSH will override the alias
+
 # Path to your oh-my-zsh installation.
 export ZSH=/Users/sauloxd/.oh-my-zsh
 #
@@ -20,13 +22,14 @@ COMPLETION_WAITING_DOTS="true"
 plugins=(git)
 
 # User configuration
-source $ZSH/oh-my-zsh.sh
+#TODO: Whats going on...
+source $ZSH/oh-my-zsh.sh > /dev/null
 source ~/.bashrc
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='vim'
 else
-  export EDITOR='mvim'
+  export EDITOR='nvim'
 fi
 

@@ -1,31 +1,26 @@
 "*****************************************************************************
 "" Vim-PLug core
 "*****************************************************************************
+
 if has('vim_starting')
   set nocompatible               " Be iMproved
 endif
 
 let vimplug_exists=expand('~/.config/nvim/autoload/plug.vim')
 
-let g:vim_bootstrap_langs = "html,javascript"
-let g:vim_bootstrap_editor = "nvim"				" nvim or vim
-
 if !filereadable(vimplug_exists)
   echo "Installing Vim-Plug..."
   echo ""
   silent !\curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
   let g:not_finish_vimplug = "yes"
-
   autocmd VimEnter * PlugInstall
 endif
 
-" Required:
+"* Call Plug *"
 call plug#begin(expand('~/.config/nvim/plugged'))
 
-"*****************************************************************************
-"" Plug install packages
-"*****************************************************************************
 Plug 'scrooloose/nerdtree'
+Plug 'albfan/nerdtree-git-plugin'
 Plug 'jistr/vim-nerdtree-tabs'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
@@ -40,10 +35,21 @@ Plug 'Raimondi/delimitMate'
 Plug 'majutsushi/tagbar'
 Plug 'scrooloose/syntastic'
 Plug 'Yggdroot/indentLine'
-Plug 'avelino/vim-bootstrap-updater'
 Plug 'sheerun/vim-polyglot'
 Plug 'simeji/winresizer'
 Plug 'tpope/vim-surround'
+Plug 'jelera/vim-javascript-syntax'
+Plug 'pangloss/vim-javascript'
+Plug 'mxw/vim-jsx'
+Plug 'nathanaelkane/vim-indent-guides'
+Plug 'digitaltoad/vim-pug'
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'ervandew/supertab'
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+Plug 'ternjs/tern_for_vim', { 'for': ['javascript', 'javascript.jsx'] }
+Plug 'carlitux/deoplete-ternjs', { 'for': ['javascript', 'javascript.jsx'] }
+Plug 'othree/jspc.vim', { 'for': ['javascript', 'javascript.jsx'] }
 
 let g:make = 'gmake'
 if exists('make')
@@ -82,13 +88,9 @@ Plug 'gorodinskiy/vim-coloresque'
 Plug 'tpope/vim-haml'
 Plug 'mattn/emmet-vim'
 
-
 " javascript
 "" Javascript Bundle
 Plug 'jelera/vim-javascript-syntax'
-
-
-"*****************************************************************************
 "*****************************************************************************
 
 "" Include user's extra bundle
@@ -100,7 +102,6 @@ call plug#end()
 
 " Required:
 filetype plugin indent on
-
 
 "*****************************************************************************
 "" Basic Setup
@@ -117,10 +118,6 @@ set binary
 set backspace=indent,eol,start
 
 "" Tabs. May be overriten by autocmd rules
-set tabstop=4
-set softtabstop=0
-set shiftwidth=4
-set expandtab
 
 "" Map leader to ,
 let mapleader="\<Space>"
@@ -136,10 +133,8 @@ set smartcase
 
 "" Directories for swp files
 set nobackup
-set noswapfile
 
 set fileformats=unix,dos,mac
-set showcmd
 set shell=/bin/sh
 
 " session management
@@ -152,8 +147,6 @@ let g:session_command_aliases = 1
 "" Visual Settings
 "*****************************************************************************
 syntax on
-set ruler
-set number
 
 let no_buffers_menu=1
 if !exists('g:not_finish_vimplug')
@@ -180,7 +173,7 @@ else
   let g:indentLine_char = '┆'
   let g:indentLine_faster = 1
 
-  
+
 endif
 
 
@@ -190,7 +183,6 @@ set gcr=a:blinkon0
 set scrolloff=3
 
 "" Status bar
-set laststatus=2
 
 "" Use modeline overrides
 set modeline
@@ -234,6 +226,9 @@ cnoreabbrev W w
 cnoreabbrev Q q
 cnoreabbrev Qall qall
 
+
+"For Inser mode
+
 "" NERDTree configuration
 let g:NERDTreeChDirMode=2
 let g:NERDTreeIgnore=['\.rbc$', '\~$', '\.pyc$', '\.db$', '\.sqlite$', '__pycache__']
@@ -256,13 +251,6 @@ let Grep_Skip_Dirs = '.git node_modules'
 let g:vimshell_user_prompt = 'fnamemodify(getcwd(), ":~")'
 let g:vimshell_prompt =  '$ '
 
-" terminal emulation
-if g:vim_bootstrap_editor == 'nvim'
-  nnoremap <silent> <leader>sh :terminal<CR>
-else
-  nnoremap <silent> <leader>sh :VimShellCreate<CR>
-endif
-tnoremap <C-c> <C-\><C-n>
 "*****************************************************************************
 "" Functions
 "*****************************************************************************
@@ -307,11 +295,15 @@ set autoread
 "*****************************************************************************
 "" Mappings
 "*****************************************************************************
+nnoremap <Leader>sv :source $MYVIMRC<cr>
+
 "" Navigating in panes
-nnoremap <F1> :wincmd w<cr>
-nnoremap `<F1> :wincmd W<cr>
+noremap <F1> :wincmd w<cr>
+noremap <F12> <Esc>:wincmd W<cr>
+inoremap <F12> <Esc>:wincmd W<cr>
+
 tnoremap <F1> <C-\><C-n>:wincmd w<cr>
-tnoremap `<F1> <C-\><C-n>:wincmd W<cr>
+tnoremap <F12> <C-\><C-n>:wincmd W<cr>
 
 "" Split
 noremap <Leader><S-d> :<C-u>split<CR>
@@ -361,6 +353,13 @@ if executable('ag')
   let g:ctrlp_use_caching = 0
 endif
 
+" bind \ (backward slash) to grep shortcut
+command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
+nnoremap \ :Ag<SPACE>
+
+" bind K to grep word under cursor
+nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+
 cnoremap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
 noremap <leader>b :CtrlPBuffer<CR>
 let g:ctrlp_map = '<leader>e'
@@ -381,7 +380,7 @@ let g:syntastic_style_error_symbol = '✗'
 let g:syntastic_style_warning_symbol = '⚠'
 let g:syntastic_auto_loc_list=1
 let g:syntastic_aggregate_errors = 1
-
+nnoremap <F12> :SyntasticToggleMode<CR>
 " Tagbar
 nmap <silent> <F4> :TagbarToggle<CR>
 let g:tagbar_autofocus = 1
@@ -443,16 +442,12 @@ autocmd Filetype html setlocal ts=2 sw=2 expandtab
 let g:javascript_enable_domhtmlcss = 1
 
 " vim-javascript
-augroup vimrc-javascript
-  autocmd!
-  autocmd FileType javascript set tabstop=4|set shiftwidth=4|set expandtab softtabstop=4
-augroup END
 
-autocmd vimenter * NERDTree
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
+"autocmd vimenter * NERDTree
+"autocmd StdinReadPre * let s:std_in=1
+"autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+"autocmd StdinReadPre * let s:std_in=1
+"autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
 let NERDTreeShowHidden=1
 
 
@@ -509,7 +504,6 @@ endif
 
 " Override All generated config above
 set number
-set relativenumber
 set numberwidth=1
 set ruler
 set wrap
@@ -528,6 +522,84 @@ set showcmd
 set listchars=tab:▸\ ,eol:¬
 set noswapfile
 syntax on
+
+"removes trailing spaces
+if !exists("*TrimWhiteSpace")
+  function TrimWhiteSpace()
+    %s/\s*$//
+    %s/\//
+    ''
+  endfunction
+endif
+
+noremap <Leader>p :CtrlP<CR>
+map <F7> :call TrimWhiteSpace()<CR>
+map! <F7> :call TrimWhiteSpace()<CR>
+
+au BufNewFile,BufRead *.ejs set filetype=html
+
+let g:ctrlp_buffer_func = { 'enter': 'MyCtrlPMappings' }
+
+func! MyCtrlPMappings()
+    nnoremap <buffer> <silent> <c-@> :call <sid>DeleteBuffer()<cr>
+endfunc
+
+func! s:DeleteBuffer()
+    let line = getline('.')
+    let bufid = line =~ '\[\d\+\*No Name\]$' ? str2nr(matchstr(line, '\d\+'))
+        \ : fnamemodify(line[2:], ':p')
+    exec "bd" bufid
+    exec "norm \<F5>"
+endfunc
+
+let &colorcolumn=join(range(81,81),",")
+highlight ColorColumn ctermbg=235 guibg=#2c2d27
+
+map 890 :e $MYVIMRC <cr>
+map 098 :so $MYVIMRC <cr>
+"JSX on JS files
+let g:jsx_ext_required = 0
+
+" Move up/down editor lines
+nnoremap j gj
+nnoremap k gk
+
+let g:fixmyjs_rc_path = '~/.eslintrc.js'
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_loc_list_height = 5
+let g:syntastic_auto_loc_list = 0
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 1
+let g:syntastic_javascript_checkers = ['eslint']
+"let g:syntastic_error_symbol = '<U+e74C>'
+"let g:syntastic_style_error_symbol = '⁉️'
+"let g:syntastic_warning_symbol = '⚠️'
+"let g:syntastic_style_warning_symbol = '<U+1F4A9>'
+highlight link SyntasticErrorSign SignColumn
+highlight link SyntasticWarningSign SignColumn
+highlight link SyntasticStyleErrorSign SignColumn
+highlight link SyntasticStyleWarningSign SignColumn
+
+let g:deoplete#enable_at_startup = 1
+
+let g:deoplete#omni#functions = {}
+let g:deoplete#omni#functions.javascript = [
+  \ 'tern#Complete',
+  \ 'jspc#omni'
+\]
+
+set completeopt=longest,menuone,preview
+let g:deoplete#sources = {}
+let g:deoplete#sources['javascript.jsx'] = ['file', 'ultisnips', 'ternjs']
+let g:tern#command = ['tern']
+let g:tern#arguments = ['--persistent']
+
+set foldmethod=syntax
+set foldnestmax=1
+set foldlevel=1
 
 
 
