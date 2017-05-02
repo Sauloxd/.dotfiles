@@ -6,3 +6,5 @@
 [user]
 	name = Sauloxd
 	email = saulotoshi@gmail.com
+[core]
+	excludesfile = /Users/sauloxd/.gitignore_global

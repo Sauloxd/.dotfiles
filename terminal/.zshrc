@@ -1,13 +1,4 @@
 #TODO: Load scripts so ZSH will override the alias
-if [ -f $HOME/.secret.sh ]; then
-  source $HOME/.secret.sh
-  #Load Revmob Bash
-  if [ -f $REVMOB_SETUP ]; then
-    source $REVMOB_SETUP
-  fi
-else
- echo "Secret doest not exist!."
-fi
 
 # Path to your oh-my-zsh installation.
 export ZSH=/Users/sauloxd/.oh-my-zsh

@@ -38,3 +38,9 @@ export PATH="$PATH:/Users/sauloxd/Library/Android/sdk/tools";
 #
 # WineHQ
 export PATH=$PATH:"/Applications/Wine Stable.app/Contents/Resources/wine/bin";
+#
+# Node
+export PATH=$PATH:"/usr/local/bin/node";
+#
+# NPM
+export PATH=$PATH:"/usr/local/bin/npm";
