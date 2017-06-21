@@ -54,7 +54,7 @@ alias sortnr='sort -n -r'
 alias unexport='unset'
 
 alias whereami=display_info
-alias gst='git status'
+alias gst='git status -s'
 alias gb='git branch'
 alias gco='git checkout'
 alias glog='git log --pretty --oneline --graph'
@@ -82,5 +82,15 @@ alias next='spotify next'
 alias prev='spotify prev'
 alias sf='spotify'
 alias cl='clear'
-
+alias whatport='lsof -i :3000'
 # trabalho
+alias premium="cd /Users/sauloxd/Project/my-projects/premium"
+alias console="cd ~/development/revmobads/console"
+alias tshield="cd ~/development/revmobads/trafficShield"
+alias router="cd ~/development/revmobads/router"
+alias dspsShield="cd ~/development/revmobads/dspsShield"
+alias tester="cd ~/development/revmobads/tester"
+alias bashscripts="cd ~/development/revmobads/bashScripts"
+alias jobs="cd ~/development/revmobads/jobs"
+alias urlchecker="cd ~/development/revmobads/url-checker"
+alias a="npm run --prefix $HOME/development/revmobads/bashScripts auto-mfa;MFA_TIME_FINAL=$(expr $(date +%s) + 3600)"

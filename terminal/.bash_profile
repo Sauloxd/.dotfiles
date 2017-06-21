@@ -5,9 +5,7 @@
 
 #source ~/development/revmob/setup/.bash_profile
 
-source ~/development/revmobads/bashScripts/shell/mfa.sh
-source ~/development/revmobads/bashScripts/shell/devenv.sh
-source ~/development/revmobads/bashScripts/shell/tester.sh
+source ~/development/revmobads/bashScripts/shell/source-me.sh
 
 for file in $HOME/.dotfiles/terminal/.{variables,path,exports,functions,extra}; do
 	[ -r "$file" ] && [ -f "$file" ] && source "$file";

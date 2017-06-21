@@ -1,4 +1,5 @@
 "*****************************************************************************
+"
 "" Vim-PLug core
 "*****************************************************************************
 
@@ -8,35 +9,39 @@ endif
 
 let vimplug_exists=expand('~/.config/nvim/autoload/plug.vim')
 
-if !filereadable(vimplug_exists)
-  echo "Installing Vim-Plug..."
-  echo ""
-  silent !\curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  let g:not_finish_vimplug = "yes"
-  autocmd VimEnter * PlugInstall
+let g:make = 'gmake'
+if exists('make')
+  let g:make = 'make'
 endif
 
 "* Call Plug *"
 call plug#begin(expand('~/.config/nvim/plugged'))
-
+" ---- NerdTree ----
 Plug 'scrooloose/nerdtree'
 Plug 'albfan/nerdtree-git-plugin'
+" ---- Nerdtree tab is same in all tab ----
 Plug 'jistr/vim-nerdtree-tabs'
+" ---- gc -> comment shit
 Plug 'tpope/vim-commentary'
+" ---- Git blame ----
 Plug 'tpope/vim-fugitive'
+" ---- CTRL P ----
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'airblade/vim-gitgutter'
+" ---- GREP
 Plug 'vim-scripts/grep.vim'
-Plug 'vim-scripts/CSApprox'
 Plug 'bronson/vim-trailing-whitespace'
 Plug 'Raimondi/delimitMate'
+" should make this work
 Plug 'majutsushi/tagbar'
 Plug 'scrooloose/syntastic'
-Plug 'Yggdroot/indentLine'
+" ---- Thin Line
+" Plug 'Yggdroot/indentLine'
+" language pack
 Plug 'sheerun/vim-polyglot'
 Plug 'simeji/winresizer'
+" ---- Delete
 Plug 'tpope/vim-surround'
 Plug 'jelera/vim-javascript-syntax'
 Plug 'pangloss/vim-javascript'
@@ -50,59 +55,20 @@ Plug 'honza/vim-snippets'
 Plug 'ternjs/tern_for_vim', { 'for': ['javascript', 'javascript.jsx'] }
 Plug 'carlitux/deoplete-ternjs', { 'for': ['javascript', 'javascript.jsx'] }
 Plug 'othree/jspc.vim', { 'for': ['javascript', 'javascript.jsx'] }
-
-let g:make = 'gmake'
-if exists('make')
-        let g:make = 'make'
-endif
 Plug 'Shougo/vimproc.vim', {'do': g:make}
-
-"" Vim-Session
 Plug 'xolox/vim-misc'
 Plug 'xolox/vim-session'
-
-if v:version >= 703
-  Plug 'Shougo/vimshell.vim'
-endif
-
-if v:version >= 704
-  "" Snippets
-  Plug 'SirVer/ultisnips'
-  Plug 'FelikZ/ctrlp-py-matcher'
-endif
-
 Plug 'honza/vim-snippets'
-
-"" Color
-Plug 'tomasr/molokai'
-Plug 'tyrannicaltoucan/vim-quantum'
-
-"*****************************************************************************
-"" Custom bundles
-"*****************************************************************************
-
-" html
-"" HTML Bundle
 Plug 'hail2u/vim-css3-syntax'
 Plug 'gorodinskiy/vim-coloresque'
 Plug 'tpope/vim-haml'
 Plug 'mattn/emmet-vim'
-
-" javascript
-"" Javascript Bundle
 Plug 'jelera/vim-javascript-syntax'
-"*****************************************************************************
-
-"" Include user's extra bundle
-if filereadable(expand("~/.config/nvim/local_bundles.vim"))
-  source ~/.config/nvim/local_bundles.vim
-endif
+Plug 'maksimr/vim-jsbeautify'
 
 call plug#end()
 
-" Required:
 filetype plugin indent on
-
 "*****************************************************************************
 "" Basic Setup
 "*****************************************************************************"
@@ -116,8 +82,6 @@ set binary
 
 "" Fix backspace indent
 set backspace=indent,eol,start
-
-"" Tabs. May be overriten by autocmd rules
 
 "" Map leader to ,
 let mapleader="\<Space>"
@@ -147,36 +111,11 @@ let g:session_command_aliases = 1
 "" Visual Settings
 "*****************************************************************************
 syntax on
-
-let no_buffers_menu=1
-if !exists('g:not_finish_vimplug')
-  set background=dark
-  colorscheme quantum
-endif
-
+colorscheme quantum
 set mousemodel=popup
 set t_Co=256
 set guioptions=egmrti
 set gfn=Monospace\ 10
-
-if has("gui_running")
-  if has("gui_mac") || has("gui_macvim")
-    set guifont=Menlo:h12
-    set transparency=7
-  endif
-else
-  let g:CSApprox_loaded = 1
-
-  " IndentLine
-  let g:indentLine_enabled = 1
-  let g:indentLine_concealcursor = 0
-  let g:indentLine_char = '┆'
-  let g:indentLine_faster = 1
-
-
-endif
-
-
 
 "" Disable the blinking cursor.
 set gcr=a:blinkon0
@@ -226,7 +165,6 @@ cnoreabbrev W w
 cnoreabbrev Q q
 cnoreabbrev Qall qall
 
-
 "For Inser mode
 
 "" NERDTree configuration
@@ -237,9 +175,8 @@ let g:NERDTreeShowBookmarks=1
 let g:nerdtree_tabs_focus_on_files=1
 let g:NERDTreeMapOpenInTabSilent = '<RightMouse>'
 let g:NERDTreeWinSize = 30
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.db,*.sqlite
-nnoremap <silent> <F2> :NERDTreeFind<CR>
-noremap <F3> :NERDTreeToggle<CR>
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.db,*.sqlite,*/node_modules/*
+nnoremap <silent> <F3> :NERDTreeFind<CR>
 
 " grep.vim
 nnoremap <silent> <leader>f :Rgrep<CR>
@@ -247,20 +184,16 @@ let Grep_Default_Options = '-IR'
 let Grep_Skip_Files = '*.log *.db'
 let Grep_Skip_Dirs = '.git node_modules'
 
-" vimshell.vim
-let g:vimshell_user_prompt = 'fnamemodify(getcwd(), ":~")'
-let g:vimshell_prompt =  '$ '
-
 "*****************************************************************************
 "" Functions
 "*****************************************************************************
-if !exists('*s:setupWrapping')
-  function s:setupWrapping()
-    set wrap
-    set wm=2
-    set textwidth=79
-  endfunction
-endif
+" if !exists('*s:setupWrapping')
+"   function s:setupWrapping()
+"     set wrap
+"     set wm=2
+"     set textwidth=79
+"   endfunction
+" endif
 
 "*****************************************************************************
 "" Autocmd Rules
@@ -278,10 +211,10 @@ augroup vimrc-remember-cursor-position
 augroup END
 
 "" txt
-augroup vimrc-wrapping
-  autocmd!
-  autocmd BufRead,BufNewFile *.txt call s:setupWrapping()
-augroup END
+" augroup vimrc-wrapping
+"   autocmd!
+"   autocmd BufRead,BufNewFile *.txt call s:setupWrapping()
+" augroup END
 
 "" make/cmake
 augroup vimrc-make-cmake
@@ -299,16 +232,17 @@ nnoremap <Leader>sv :source $MYVIMRC<cr>
 
 "" Navigating in panes
 noremap <F1> :wincmd w<cr>
-noremap <F12> <Esc>:wincmd W<cr>
-inoremap <F12> <Esc>:wincmd W<cr>
+inoremap <F1> <Esc>:wincmd w<cr>
+noremap <F2> <Esc>:wincmd W<cr>
+inoremap <F2> <Esc>:wincmd W<cr>
 
 tnoremap <F1> <C-\><C-n>:wincmd w<cr>
-tnoremap <F12> <C-\><C-n>:wincmd W<cr>
+tnoremap <F2> <C-\><C-n>:wincmd W<cr>
 
 "" Split
-noremap <Leader><S-d> :<C-u>split<CR>
-noremap <Leader>d :<C-u>vsplit<CR>
-
+noremap <Leader><S-d> :<C-u>split<CR> :wincmd w<cr>
+noremap <Leader>d :<C-u>vsplit<CR> :wincmd w<cr>
+ :terminal
 "" Git
 noremap <Leader>ga :Gwrite<CR>
 noremap <Leader>gc :Gcommit<CR>
@@ -326,18 +260,12 @@ nnoremap <leader>sd :DeleteSession<CR>
 nnoremap <leader>sc :Clo3eSessionder<CR>
 
 "" Tabs
-nnoremap <Tab> gt
-nnoremap <S-Tab> gT
+nnoremap <Tab> :bn<CR>
+nnoremap <S-Tab> :bp<CR>
 nnoremap <silent> <S-t> :tabnew<CR>
 
 "" Set working directory
 nnoremap <leader>. :lcd %:p:h<CR>
-
-"" Opens an edit command with the path of the currently edited file filled in
-noremap <Leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
-
-"" Opens a tab edit command with the path of the currently edited file filled
-noremap <Leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
 
 "" ctrlp.vim
 set wildmode=list:longest,list:full
@@ -348,9 +276,9 @@ let g:ctrlp_use_caching = 1
 
 " The Silver Searcher
 if executable('ag')
-  set grepprg=ag\ --nogroup\ --nocolor
-  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-  let g:ctrlp_use_caching = 0
+set grepprg=ag\ --nogroup\ --nocolor
+let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+let g:ctrlp_use_caching = 0
 endif
 
 " bind \ (backward slash) to grep shortcut
@@ -359,6 +287,9 @@ nnoremap \ :Ag<SPACE>
 
 " bind K to grep word under cursor
 nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+
+" bind ] to grep word under cursor
+nnoremap <leader>k /<C-R><C-W><CR>
 
 cnoremap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
 noremap <leader>b :CtrlPBuffer<CR>
@@ -388,22 +319,22 @@ let g:tagbar_autofocus = 1
 " Disable visualbell
 set noerrorbells visualbell t_vb=
 if has('autocmd')
-  autocmd GUIEnter * set visualbell t_vb=
+autocmd GUIEnter * set visualbell t_vb=
 endif
 
 "" Copy/Paste/Cut
 if has('unnamedplus')
-  set clipboard=unnamed,unnamedplus
+set clipboard=unnamed,unnamedplus
 endif
 
 noremap YY "+y<CR>
-noremap <leader>p "+gP<CR>
+noremap <leader>v "+gP<CR>
 noremap XX "+x<CR>
 
 if has('macunix')
-  " pbcopy for OSX copy/paste
-  vmap <C-x> :!pbcopy<CR>
-  vmap <C-c> :w !pbcopy<CR><CR>
+" pbcopy for OSX copy/paste
+vmap <C-x> :!pbcopy<CR>
+vmap <C-c> :w !pbcopy<CR><CR>
 endif
 
 "" Buffer nav
@@ -413,7 +344,7 @@ noremap <leader>x :bn<CR>
 noremap <leader>w :bn<CR>
 
 "" Close buffer
-noremap <leader>c :bd<CR>
+noremap <leader>c :bp\|bd # <CR>
 
 "" Clean search (highlight)
 nnoremap <silent> <leader><space> :noh<cr>
@@ -456,7 +387,7 @@ let NERDTreeShowHidden=1
 
 "" Include user's local vim config
 if filereadable(expand("~/.config/nvim/local_init.vim"))
-  source ~/.config/nvim/local_init.vim
+source ~/.config/nvim/local_init.vim
 endif
 
 "*****************************************************************************
@@ -465,40 +396,40 @@ endif
 
 " vim-airline
 if !exists('g:airline_symbols')
-  let g:airline_symbols = {}
+let g:airline_symbols = {}
 endif
 
 let g:airline_powerline_fonts = 1
 
 if !exists('g:airline_powerline_fonts')
-  let g:airline#extensions#tabline#left_sep = ' '
-  let g:airline#extensions#tabline#left_alt_sep = '|'
-  let g:airline_left_sep          = '▶'
-  let g:airline_left_alt_sep      = '»'
-  let g:airline_right_sep         = '◀'
-  let g:airline_right_alt_sep     = '«'
-  let g:airline#extensions#branch#prefix     = '⤴' "➔, ➥, ⎇
-  let g:airline#extensions#readonly#symbol   = '⊘'
-  let g:airline#extensions#linecolumn#prefix = '¶'
-  let g:airline#extensions#paste#symbol      = 'ρ'
-  let g:airline_symbols.linenr    = '␊'
-  let g:airline_symbols.branch    = '⎇'
-  let g:airline_symbols.paste     = 'ρ'
-  let g:airline_symbols.paste     = 'Þ'
-  let g:airline_symbols.paste     = '∥'
-  let g:airline_symbols.whitespace = 'Ξ'
+let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#left_alt_sep = '|'
+let g:airline_left_sep          = '▶'
+let g:airline_left_alt_sep      = '»'
+let g:airline_right_sep         = '◀'
+let g:airline_right_alt_sep     = '«'
+let g:airline#extensions#branch#prefix     = '⤴' "➔, ➥, ⎇
+let g:airline#extensions#readonly#symbol   = '⊘'
+let g:airline#extensions#linecolumn#prefix = '¶'
+let g:airline#extensions#paste#symbol      = 'ρ'
+let g:airline_symbols.linenr    = '␊'
+let g:airline_symbols.branch    = '⎇'
+let g:airline_symbols.paste     = 'ρ'
+let g:airline_symbols.paste     = 'Þ'
+let g:airline_symbols.paste     = '∥'
+let g:airline_symbols.whitespace = 'Ξ'
 else
-  let g:airline#extensions#tabline#left_sep = ''
-  let g:airline#extensions#tabline#left_alt_sep = ''
+let g:airline#extensions#tabline#left_sep = ''
+let g:airline#extensions#tabline#left_alt_sep = ''
 
-  " powerline symbols
-  let g:airline_left_sep = ''
-  let g:airline_ltft_alt_sep = ''
-  let g:airline_right_sep = ''
-  let g:airline_right_alt_sep = ''
-  let g:airline_symbols.branch = ''
-  let g:airline_symbols.readonly = ''
-  let g:airline_symbols.linenr = ''
+" powerline symbols
+let g:airline_left_sep = ''
+let g:airline_ltft_alt_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_alt_sep = ''
+let g:airline_symbols.branch = ''
+let g:airline_symbols.readonly = ''
+let g:airline_symbols.linenr = ''
 endif
 
 
@@ -506,8 +437,8 @@ endif
 set number
 set numberwidth=1
 set ruler
-set wrap
-set textwidth=79
+" set wrap
+" set textwidth=79
 set formatoptions=tcqrn1
 set tabstop=2
 set shiftwidth=2
@@ -525,11 +456,11 @@ syntax on
 
 "removes trailing spaces
 if !exists("*TrimWhiteSpace")
-  function TrimWhiteSpace()
-    %s/\s*$//
-    %s/\//
-    ''
-  endfunction
+function TrimWhiteSpace()
+%s/\s*$//
+%s/\//
+''
+endfunction
 endif
 
 noremap <Leader>p :CtrlP<CR>
@@ -541,15 +472,15 @@ au BufNewFile,BufRead *.ejs set filetype=html
 let g:ctrlp_buffer_func = { 'enter': 'MyCtrlPMappings' }
 
 func! MyCtrlPMappings()
-    nnoremap <buffer> <silent> <c-@> :call <sid>DeleteBuffer()<cr>
+nnoremap <buffer> <silent> <c-@> :call <sid>DeleteBuffer()<cr>
 endfunc
 
 func! s:DeleteBuffer()
-    let line = getline('.')
-    let bufid = line =~ '\[\d\+\*No Name\]$' ? str2nr(matchstr(line, '\d\+'))
-        \ : fnamemodify(line[2:], ':p')
-    exec "bd" bufid
-    exec "norm \<F5>"
+let line = getline('.')
+let bufid = line =~ '\[\d\+\*No Name\]$' ? str2nr(matchstr(line, '\d\+'))
+		\ : fnamemodify(line[2:], ':p')
+exec "bd" bufid
+exec "norm \<F5>"
 endfunc
 
 let &colorcolumn=join(range(81,81),",")
@@ -587,8 +518,8 @@ let g:deoplete#enable_at_startup = 1
 
 let g:deoplete#omni#functions = {}
 let g:deoplete#omni#functions.javascript = [
-  \ 'tern#Complete',
-  \ 'jspc#omni'
+\ 'tern#Complete',
+\ 'jspc#omni'
 \]
 
 set completeopt=longest,menuone,preview
@@ -601,5 +532,9 @@ set foldmethod=syntax
 set foldnestmax=1
 set foldlevel=1
 
+noremap <Leader>r :TernDef<CR>
+set completeopt-=preview
+vnoremap // y/<C-R>"<CR>
 
+noremap <leader>t :<C-u>split<CR> :wincmd w<cr> :terminal <cr>
 

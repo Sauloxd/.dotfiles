@@ -4,7 +4,7 @@
 export ZSH=/Users/sauloxd/.oh-my-zsh
 #
 # ~/.oh-my-zsh/themes/
-ZSH_THEME="robbyrussell"
+ZSH_THEME="Nodeys"
 #
 # Command auto-correction.
 ENABLE_CORRECTION="true"
