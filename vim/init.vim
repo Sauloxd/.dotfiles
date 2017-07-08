@@ -35,7 +35,6 @@ Plug 'bronson/vim-trailing-whitespace'
 Plug 'Raimondi/delimitMate'
 " should make this work
 Plug 'majutsushi/tagbar'
-Plug 'scrooloose/syntastic'
 " ---- Thin Line
 " Plug 'Yggdroot/indentLine'
 " language pack
@@ -65,8 +64,18 @@ Plug 'tpope/vim-haml'
 Plug 'mattn/emmet-vim'
 Plug 'jelera/vim-javascript-syntax'
 Plug 'maksimr/vim-jsbeautify'
+Plug 'heavenshell/vim-jsdoc'
+Plug 'mhinz/vim-startify'
+Plug 'dracula/vim'
+Plug 'junegunn/vim-easy-align'
+Plug 'w0rp/ale'
 
 call plug#end()
+
+"*****************************************************************************
+"" Enable dots as empty Spaces
+"*****************************************************************************"
+let g:indent_guides_enable_on_vim_startup = 1
 
 filetype plugin indent on
 "*****************************************************************************
@@ -111,7 +120,7 @@ let g:session_command_aliases = 1
 "" Visual Settings
 "*****************************************************************************
 syntax on
-colorscheme quantum
+colorscheme dracula
 set mousemodel=popup
 set t_Co=256
 set guioptions=egmrti
@@ -144,7 +153,8 @@ endif
 
 " vim-airline
 let g:airline_theme = 'powerlineish'
-let g:airline#extensions#syntastic#enabled = 1
+let g:airline#extensions#ale#enabled = 1
+" let g:airline#extensions#syntastic#enabled = 1
 let g:airline#extensions#branch#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tagbar#enabled = 1
@@ -242,7 +252,7 @@ tnoremap <F2> <C-\><C-n>:wincmd W<cr>
 "" Split
 noremap <Leader><S-d> :<C-u>split<CR> :wincmd w<cr>
 noremap <Leader>d :<C-u>vsplit<CR> :wincmd w<cr>
- :terminal
+
 "" Git
 noremap <Leader>ga :Gwrite<CR>
 noremap <Leader>gc :Gcommit<CR>
@@ -303,15 +313,15 @@ let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<c-b>"
 let g:UltiSnipsEditSplit="vertical"
 
-" syntastic
-let g:syntastic_always_populate_loc_list=1
-let g:syntastic_error_symbol='✗'
-let g:syntastic_warning_symbol='⚠'
-let g:syntastic_style_error_symbol = '✗'
-let g:syntastic_style_warning_symbol = '⚠'
-let g:syntastic_auto_loc_list=1
-let g:syntastic_aggregate_errors = 1
-nnoremap <F12> :SyntasticToggleMode<CR>
+" " syntastic
+" let g:syntastic_always_populate_loc_list=1
+" let g:syntastic_error_symbol='✗'
+" let g:syntastic_warning_symbol='⚠'
+" let g:syntastic_style_error_symbol = '✗'
+" let g:syntastic_style_warning_symbol = '⚠'
+" let g:syntastic_auto_loc_list=1
+" let g:syntastic_aggregate_errors = 1
+" nnoremap <F12> :SyntasticToggleMode<CR>
 " Tagbar
 nmap <silent> <F4> :TagbarToggle<CR>
 let g:tagbar_autofocus = 1
@@ -497,22 +507,22 @@ nnoremap k gk
 
 let g:fixmyjs_rc_path = '~/.eslintrc.js'
 set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
+" set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_loc_list_height = 5
-let g:syntastic_auto_loc_list = 0
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 1
-let g:syntastic_javascript_checkers = ['eslint']
+" let g:syntastic_always_populate_loc_list = 1
+" let g:syntastic_loc_list_height = 5
+" let g:syntastic_auto_loc_list = 0
+" let g:syntastic_check_on_open = 1
+" let g:syntastic_check_on_wq = 1
+" let g:syntastic_javascript_checkers = ['eslint']
 "let g:syntastic_error_symbol = '<U+e74C>'
 "let g:syntastic_style_error_symbol = '⁉️'
 "let g:syntastic_warning_symbol = '⚠️'
 "let g:syntastic_style_warning_symbol = '<U+1F4A9>'
-highlight link SyntasticErrorSign SignColumn
-highlight link SyntasticWarningSign SignColumn
-highlight link SyntasticStyleErrorSign SignColumn
-highlight link SyntasticStyleWarningSign SignColumn
+" highlight link SyntasticErrorSign SignColumn
+" highlight link SyntasticWarningSign SignColumn
+" highlight link SyntasticStyleErrorSign SignColumn
+" highlight link SyntasticStyleWarningSign SignColumn
 
 let g:deoplete#enable_at_startup = 1
 
@@ -538,3 +548,9 @@ vnoremap // y/<C-R>"<CR>
 
 noremap <leader>t :<C-u>split<CR> :wincmd w<cr> :terminal <cr>
 
+autocmd VimEnter *
+            \   if !argc()
+            \ |   Startify
+            \ |   NERDTree
+            \ |   wincmd w
+            \ | endif
