@@ -9,6 +9,8 @@ alias gdfile="git diff-tree --no-commit-id --name-only -r"
 alias gd="git diff"
 
 #MAC Aliases
+alias v="nvim"
+alias vi="nvim"
 alias vim="nvim"
 alias qr="cd ~/.itermocil; itermocil qr;cd ~"
 alias elastiqx="cd ~/.itermocil; itermocil elastiqx; cd ~"
@@ -20,6 +22,7 @@ alias fritar="spotify play uri spotify:user:spotify:playlist:67nMZWgcUxNa5uaiyLD
 #QR aliases
 alias addqrfonts="g add app/assets/fonts/qulture-icon.eot app/assets/fonts/qulture-icon.svg app/assets/fonts/qulture-icon.ttf app/assets/fonts/qulture-icon.woff app/assets/fonts/qulture-icon.woff2"
 
+alias sandbox="cd ~/sandbox/"
 #ZSH aliases
 
 # ls, the common ones I use a lot shortened for rapid fire usage
@@ -91,6 +94,6 @@ alias router="cd ~/development/revmobads/router"
 alias dspsShield="cd ~/development/revmobads/dspsShield"
 alias tester="cd ~/development/revmobads/tester"
 alias bashscripts="cd ~/development/revmobads/bashScripts"
-alias jobs="cd ~/development/revmobads/jobs"
 alias urlchecker="cd ~/development/revmobads/url-checker"
 alias a="npm run --prefix $HOME/development/revmobads/bashScripts auto-mfa;MFA_TIME_FINAL=$(expr $(date +%s) + 3600)"
+source ~/development/revmobads/bashScripts/shell/source-me.sh

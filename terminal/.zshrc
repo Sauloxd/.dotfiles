@@ -4,7 +4,7 @@
 export ZSH=/Users/sauloxd/.oh-my-zsh
 #
 # ~/.oh-my-zsh/themes/
-ZSH_THEME="Nodeys"
+ZSH_THEME="spaceship"
 #
 # Command auto-correction.
 ENABLE_CORRECTION="true"
@@ -28,8 +28,12 @@ source ~/.bashrc
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
+  export EDITOR='nvim'
 else
   export EDITOR='nvim'
 fi
 
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

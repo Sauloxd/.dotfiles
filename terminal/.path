@@ -47,3 +47,6 @@ export PATH=$PATH:"/usr/local/bin/npm";
 #
 # PhantomJS
 export PATH=$PATH:"$HOME/phantomjs/bin";
+#
+# Terraform
+export PATH=$PATH:"$HOME/Terraform";
