@@ -2,10 +2,8 @@
 "" Vim-PLug core
 "*****************************************************************************
 
-let vimplug_exists=expand('~/.config/nvim/autoload/plug.vim')
-
 "* Call Plug *"
-call plug#begin(expand('~/.config/nvim/plugged'))
+call plug#begin()
 Plug 'scrooloose/nerdtree'
 Plug 'albfan/nerdtree-git-plugin'
 Plug 'jistr/vim-nerdtree-tabs'
@@ -25,7 +23,6 @@ Plug 'mtscout6/syntastic-local-eslint.vim'
 Plug 'hail2u/vim-css3-syntax'
 Plug 'mxw/vim-jsx'
 Plug 'maksimr/vim-jsbeautify'
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'ternjs/tern_for_vim', { 'for': ['javascript', 'javascript.jsx'] }
 Plug 'carlitux/deoplete-ternjs', { 'for': ['javascript', 'javascript.jsx'] }
 Plug 'gorodinskiy/vim-coloresque'
@@ -33,6 +30,7 @@ Plug 'mattn/emmet-vim'
 Plug 'mhinz/vim-startify'
 Plug 'dracula/vim'
 Plug 'junegunn/vim-easy-align'
+Plug 'morhetz/gruvbox'
 " Plug 'w0rp/ale'
 Plug 'terryma/vim-smooth-scroll'
 Plug 'vim-scripts/closetag.vim'
@@ -64,7 +62,7 @@ set fileformats=unix,dos,mac
 set shell=/bin/zsh
 
 " session management
-let g:session_directory = "~/.config/nvim/session"
+let g:session_directory = "~/.vim/session"
 let g:session_autoload = "no"
 let g:session_autosave = "no"
 let g:session_command_aliases = 1
@@ -72,7 +70,7 @@ let g:session_command_aliases = 1
 "*****************************************************************************
 "" Visual Settings
 "*****************************************************************************
-colorscheme quantum
+colorscheme gruvBox
 
 " Search mappings: These will make it so that going to the next one in a
 " search will center on the line it's found in.
@@ -177,12 +175,12 @@ set autowriteall
 "*****************************************************************************
 "" Mappings
 "*****************************************************************************
+"" Clear CTRLP cache
+map <leader>C :CtrlPClearCache<cr>
 
 "" Navigating in panes
 noremap <F1> :wincmd w<cr>
 noremap <F2> :wincmd W<cr>
-tnoremap <F1> <C-\><C-n>:wincmd w<cr>
-tnoremap <F2> <C-\><C-n>:wincmd W<cr>
 
 "" Split
 noremap <Leader><S-d> :<C-u>split<CR> :wincmd w<cr>
@@ -216,8 +214,8 @@ nnoremap <leader>. :lcd %:p:h<CR>
 " Surrouding
 nnoremap 'iw bdt i''<esc>hp
 vnoremap 'iv <esc>`>a'<esc>`<i'
-vnoremap (iv <esc>`>a )<esc>`<i( 
-vnoremap {iv <esc>`>a }<esc>`<i{ 
+vnoremap (iv <esc>`>a )<esc>`<i(
+vnoremap {iv <esc>`>a }<esc>`<i{
 
 "" ctrlp.vim
 set wildmode=list:longest,list:full
@@ -415,8 +413,6 @@ let g:tern#arguments = ['--persistent']
 
 " Open new tab, add terminal horizontal
 noremap <leader>t :<C-u>split<CR> :wincmd w<cr> :terminal <cr>
-" Exit terminal
-tnoremap <Esc> <C-\><C-n>
 
 augroup vim-enter
   autocmd!
@@ -426,4 +422,3 @@ augroup vim-enter
               \ |   NERDTree
               \ |   wincmd w
               \ | endif
-

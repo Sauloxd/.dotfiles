@@ -1,33 +1,22 @@
 #!/bin/bash
-alias vv="nvim ~/.dotfiles/vim/init.vim"
+alias vv="vim ~/.dotfiles/vim/init.vim"
 alias ss="source ~/.dotfiles/terminal/.bash_profile"
 
 #GIT ALIASES
-alias gh="git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all"
+# alias gh="git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all"
 alias gap="g add -p"
 alias gdfile="git diff-tree --no-commit-id --name-only -r"
 alias gd="git diff"
 
 #MAC Aliases
-alias v="nvim"
-alias vi="nvim"
-alias vim="nvim"
-alias qr="cd ~/.itermocil; itermocil qr;cd ~"
-alias elastiqx="cd ~/.itermocil; itermocil elastiqx; cd ~"
-
-
-#SPOTIFY ALIASES
-alias fritar="spotify play uri spotify:user:spotify:playlist:67nMZWgcUxNa5uaiyLDR2x"
-
-#QR aliases
-alias addqrfonts="g add app/assets/fonts/qulture-icon.eot app/assets/fonts/qulture-icon.svg app/assets/fonts/qulture-icon.ttf app/assets/fonts/qulture-icon.woff app/assets/fonts/qulture-icon.woff2"
-
+alias v="vim"
+alias vi="vim"
 alias sandbox="cd ~/sandbox/"
+
 #ZSH aliases
 
 # ls, the common ones I use a lot shortened for rapid fire usage
 alias g="git"
-alias l='ls -lFh'     #size,show type,human readable
 alias la='ls -lAFh'   #long list,show almost all,show type,human readable
 alias lr='ls -tRFh'   #sorted by date,recursive,show type,human readable
 alias lt='ls -ltFh'   #long list,sorted by date,show type,human readable
@@ -61,7 +50,7 @@ alias gst='git status -s'
 alias gb='git branch'
 alias gco='git checkout'
 alias glog='git log --pretty --oneline --graph'
-alias ]='auto_mfa; nodemon -e '"'"'.js|.ejs'"'"' app.js' 
+alias ]='auto_mfa; nodemon -e '"'"'.js|.ejs'"'"' app.js'
 alias gap='git add -p'
 alias gc='git commit'
 alias ga='git add'
@@ -96,4 +85,3 @@ alias tester="cd ~/development/revmobads/tester"
 alias bashscripts="cd ~/development/revmobads/bashScripts"
 alias urlchecker="cd ~/development/revmobads/url-checker"
 alias a="npm run --prefix $HOME/development/revmobads/bashScripts auto-mfa;MFA_TIME_FINAL=$(expr $(date +%s) + 3600)"
-source ~/development/revmobads/bashScripts/shell/source-me.sh

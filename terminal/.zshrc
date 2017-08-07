@@ -1,7 +1,7 @@
 #TODO: Load scripts so ZSH will override the alias
 
 # Path to your oh-my-zsh installation.
-export ZSH=/Users/sauloxd/.oh-my-zsh
+export ZSH=$HOME/.oh-my-zsh
 #
 # ~/.oh-my-zsh/themes/
 ZSH_THEME="spaceship"
@@ -28,12 +28,9 @@ source ~/.bashrc
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='nvim'
+  export EDITOR='vim'
 else
-  export EDITOR='nvim'
+  export EDITOR='vim'
 fi
 
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+source ~/development/revmobads/bashScripts/shell/source-me.sh

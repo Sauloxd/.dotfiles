@@ -43,10 +43,13 @@ export PATH=$PATH:"/Applications/Wine Stable.app/Contents/Resources/wine/bin";
 export PATH=$PATH:"/usr/local/bin/node";
 #
 # NPM
-export PATH=$PATH:"/usr/local/bin/npm";
+export PATH=~/.npm-global/bin:$PATH
 #
 # PhantomJS
 export PATH=$PATH:"$HOME/phantomjs/bin";
 #
 # Terraform
 export PATH=$PATH:"$HOME/Terraform";
+#
+# Python
+export PATH="/usr/local/Cellar/python3/3.6.2/bin:$PATH"

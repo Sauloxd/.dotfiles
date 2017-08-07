@@ -7,7 +7,7 @@
 	name = Sauloxd
 	email = saulotoshi@gmail.com
 [core]
-	excludesfile = /Users/sauloxd/.gitignore_global
+	excludesfile = /Users/saulofuruta/.gitignore_global
 	pager = diff-so-fancy | less --tabs=4 -RFX
 [color "diff-highlight"]
 	oldNormal = red bold
