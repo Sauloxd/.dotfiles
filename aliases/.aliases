@@ -32,6 +32,7 @@ alias grep='grep --color'
 alias sgrep='grep -R -n -H -C 5 --exclude-dir={.git,.svn,CVS} '
 
 alias t='tail -f'
+alias tm='tmux ls'
 
 alias dud='du -d 1 -h'
 alias duf='du -sh *'
@@ -42,40 +43,20 @@ alias h='history'
 alias hgrep="fc -El 0 | grep"
 alias help='man'
 alias p='ps -f'
-alias sortnr='sort -n -r'
-alias unexport='unset'
 
-alias whereami=display_info
 alias gst='git status -s'
 alias gb='git branch'
 alias gco='git checkout'
-alias glog='git log --pretty --oneline --graph'
-alias ]='auto_mfa; nodemon -e '"'"'.js|.ejs'"'"' app.js'
 alias gap='git add -p'
 alias gc='git commit'
 alias ga='git add'
-alias spn='sudo pkill node'
-alias spm='sudo pkill mongo'
-alias spr='sudo pkill redis'
-alias xx='sudo pkill GitX'
-alias sp='sudo pkill'
-alias spa='spn; spm; spr'
-alias t='spa; tt'
-alias r='git fetch origin; git reset --hard origin/dev'
-alias rs='update_scripts'
-alias desktop='cd ~/Desktop'
-alias downloads='cd ~/Downloads'
-alias show='g show head'
-alias pp='push_simple -n'
-alias PP='push_simple -f'
-alias uu='pull_simple'
 alias gh="git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all"
-alias next='spotify next'
-alias prev='spotify prev'
-alias sf='spotify'
-alias cl='clear'
 alias whatport='lsof -i :3000'
+
 # trabalho
+## MFA
+alias a="npm run --prefix $HOME/development/revmobads/bashScripts auto-mfa;MFA_TIME_FINAL=$(expr $(date +%s) + 3600)"
+## DIR
 alias premium="cd /Users/sauloxd/Project/my-projects/premium"
 alias console="cd ~/development/revmobads/console"
 alias tshield="cd ~/development/revmobads/trafficShield"
@@ -84,4 +65,5 @@ alias dspsShield="cd ~/development/revmobads/dspsShield"
 alias tester="cd ~/development/revmobads/tester"
 alias bashscripts="cd ~/development/revmobads/bashScripts"
 alias urlchecker="cd ~/development/revmobads/url-checker"
-alias a="npm run --prefix $HOME/development/revmobads/bashScripts auto-mfa;MFA_TIME_FINAL=$(expr $(date +%s) + 3600)"
+alias dev="cd ~/development/revmobads"
+alias econsole="cd $HOME/elastiqx/console"

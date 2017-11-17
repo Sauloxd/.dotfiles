@@ -4,36 +4,54 @@
 
 "* Call Plug *"
 call plug#begin()
-Plug 'scrooloose/nerdtree'
+  function! BuildYCM(info)
+    if a:info.status == 'installed' || a:info.force
+      !./install.sh --tern-completer
+    endif
+  endfunction
+
+  function! BuildTern(info)
+    if a:info.status == 'installed' || a:info.force
+      !npm install
+    endif
+  endfunction
+
+" Must also install powerline fonts
+" Plug 'carlitux/deoplete-ternjs', { 'for': ['javascript', 'javascript.jsx'] }
+" Plug 'dracula/vim'
+" Plug 'ervandew/supertab'
+" Plug 'gorodinskiy/vim-coloresque'
+" Plug 'terryma/vim-smooth-scroll'
+" Plug 'vim-scripts/closetag.vim'
+Plug 'w0rp/ale'
 Plug 'albfan/nerdtree-git-plugin'
+Plug 'bronson/vim-trailing-whitespace'
+Plug 'kien/ctrlp.vim'
+Plug 'hail2u/vim-css3-syntax'
+Plug 'jelera/vim-javascript-syntax'
 Plug 'jistr/vim-nerdtree-tabs'
+Plug 'junegunn/vim-easy-align' "gaip=
+Plug 'maksimr/vim-jsbeautify'
+Plug 'maralla/completor.vim'
+Plug 'mattn/emmet-vim'
+Plug 'mhinz/vim-startify'
+Plug 'morhetz/gruvbox'
+Plug 'mxw/vim-jsx'
+Plug 'pangloss/vim-javascript'
+Plug 'scrooloose/nerdtree'
+Plug 'sheerun/vim-polyglot'
+Plug 'simeji/winresizer'
+Plug 'sjl/gundo.vim'
+Plug 'ternjs/tern_for_vim', { 'do': function('BuildTern') }
+Plug 'ervandew/supertab'
+" Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
-Plug 'ctrlpvim/ctrlp.vim'
+Plug 'tpope/vim-surround'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'vim-scripts/grep.vim'
-Plug 'bronson/vim-trailing-whitespace'
-Plug 'sheerun/vim-polyglot'
-Plug 'simeji/winresizer'
-Plug 'jelera/vim-javascript-syntax'
-Plug 'pangloss/vim-javascript'
-Plug 'vim-syntastic/syntastic'
-Plug 'mtscout6/syntastic-local-eslint.vim'
-Plug 'hail2u/vim-css3-syntax'
-Plug 'mxw/vim-jsx'
-Plug 'maksimr/vim-jsbeautify'
-Plug 'ternjs/tern_for_vim', { 'for': ['javascript', 'javascript.jsx'] }
-Plug 'carlitux/deoplete-ternjs', { 'for': ['javascript', 'javascript.jsx'] }
-Plug 'gorodinskiy/vim-coloresque'
-Plug 'mattn/emmet-vim'
-Plug 'mhinz/vim-startify'
-Plug 'dracula/vim'
-Plug 'junegunn/vim-easy-align'
-Plug 'morhetz/gruvbox'
-" Plug 'w0rp/ale'
-Plug 'terryma/vim-smooth-scroll'
-Plug 'vim-scripts/closetag.vim'
+Plug 'christoomey/vim-tmux-navigator'
 
 call plug#end()
 
@@ -67,6 +85,8 @@ let g:session_autoload = "no"
 let g:session_autosave = "no"
 let g:session_command_aliases = 1
 
+
+
 "*****************************************************************************
 "" Visual Settings
 "*****************************************************************************
@@ -86,43 +106,7 @@ syntax enable
 let g:javascript_plugin_jsdoc = 1
 filetype plugin indent on
 
-let g:syntastic_javascript_checkers = ['eslint']
-let g:syntastic_style_error_symbol = '✗'
-let g:syntastic_warning_symbol = '⚠'
-
-function! SyntasticToggleAutoLocList()
-    if g:syntastic_auto_loc_list == 2
-        let g:syntastic_auto_loc_list = 1
-    else
-        lclose
-        let g:syntastic_auto_loc_list = 2
-    endif
-    SyntasticCheck
-endfunction
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 2
-let g:syntastic_check_on_open = 0
-let g:syntastic_check_on_wq = 1
-
-nnoremap <silent> ]l :lnext<CR>
-nnoremap <silent> [l :lprev<CR>
-nnoremap <silent> <leader>lt :call SyntasticToggleAutoLocList()<CR>
-
-" Runs syntastic if the buffer is read due to external changes
-autocmd BufRead * SyntasticCheck
-
-" Javascript
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-" highlight link SyntasticErrorSign SignColumn
-" highlight link SyntasticWarningSign SignColumn
-" highlight link SyntasticStyleErrorSign SignColumn
-" highlight link SyntasticStyleWarningSign SignColumn
-" nnoremap <F12> :SyntasticToggleMode<CR>
-
+let g:ale_linters = {'javascript': ['eslint']}
 " closeTag
 " filenames like *.xml, *.html, *.xhtml, ...
 let g:closetag_filenames = '*.html,*.xhtml,*.phtml'
@@ -134,6 +118,8 @@ let g:closetag_xhtml_filenames = '*.xhtml,*.jsx,*.ejs'
 "" Abbreviations
 "*****************************************************************************
 inoreabbrev jsdoc /**<cr>📄📄📄📄📄📄📄📄📄📄<cr>@param {object} param.name - param.description<cr>@param {object} param.name - param.description<cr>@return {number} return.description<cr><backspace>*/<cr>
+abbrev :W :w
+abbrev :Q :q
 
 "" NERDTree configuration
 let g:NERDTreeChDirMode=2
@@ -141,14 +127,16 @@ let g:NERDTreeIgnore=['\.rbc$', '\~$', '\.pyc$', '\.db$', '\.sqlite$', '__pycach
 let g:NERDTreeSortOrder=['^__\.py$', '\/$', '*', '\.swp$', '\.bak$', '\~$']
 let g:NERDTreeShowBookmarks=1
 let g:nerdtree_tabs_focus_on_files=1
-let g:NERDTreeMapOpenInTabSilent = '<RightMouse>'
 let g:NERDTreeWinSize = 30
 let g:NERDTreeShowHidden=1
+let NERDTreeShowLineNumbers=1
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.db,*.sqlite,*/node_modules/*
 nnoremap <silent> <F3> :NERDTreeFind<CR>
+nnoremap <silent> <F4> :NERDTreeToggle<CR>
 
 " grep.vim
-nnoremap <silent> <leader>f :Rgrep<CR>
+nnoremap <silent> <leader>f /<C-R><C-W><CR>N
+nnoremap <silent> <leader><S-f> :Rgrep<CR>
 let Grep_Default_Options = '-IR'
 let Grep_Skip_Files = '*.log *.db'
 let Grep_Skip_Dirs = '.git node_modules'
@@ -175,12 +163,15 @@ set autowriteall
 "*****************************************************************************
 "" Mappings
 "*****************************************************************************
+"" HIDEKI
+noremap <leader>z :GundoToggle<cr>
+inoremap jk <esc>
+inoremap kj <esc>
+noremap Q @q
+noremap > lnext
+
 "" Clear CTRLP cache
 map <leader>C :CtrlPClearCache<cr>
-
-"" Navigating in panes
-noremap <F1> :wincmd w<cr>
-noremap <F2> :wincmd W<cr>
 
 "" Split
 noremap <Leader><S-d> :<C-u>split<CR> :wincmd w<cr>
@@ -203,19 +194,12 @@ nnoremap <leader>sd :DeleteSession<CR>
 nnoremap <leader>sc :Clo3eSessionder<CR>
 
 "" Buffers
-nnoremap <Tab> :bn<CR>
-nnoremap <S-Tab> :bp<CR>
+nnoremap <S-Tab> :bn<CR>
 nnoremap <silent> <S-t> :vnew <CR>
 nnoremap <leader>c :bp <BAR> bd #<CR>
 
 "" Set working directory
 nnoremap <leader>. :lcd %:p:h<CR>
-
-" Surrouding
-nnoremap 'iw bdt i''<esc>hp
-vnoremap 'iv <esc>`>a'<esc>`<i'
-vnoremap (iv <esc>`>a )<esc>`<i(
-vnoremap {iv <esc>`>a }<esc>`<i{
 
 "" ctrlp.vim
 set wildmode=list:longest,list:full
@@ -229,6 +213,9 @@ let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
 
 noremap YY "+y<CR>
 noremap XX "+x<CR>
+if $TMUX == ''
+  set clipboard+=unnamed
+endif
 
 if has('macunix')
 " pbcopy for OSX copy/paste
@@ -243,7 +230,7 @@ noremap <leader>q :tabprevious<CR>
 "" Close buffer
 
 "" Clean search (highlight)
-nnoremap <silent> <leader><space> :noh<cr>
+nnoremap <silent> <leader><space> :nohlsearch<cr>
 
 "" Vmap for maintain Visual Mode after shifting > and <
 vnoremap < <gv
@@ -263,8 +250,9 @@ nnoremap k gk
 " Strong Moves
 nnoremap L $
 nnoremap H 0
-nnoremap K :call smooth_scroll#up(1, 0, 1)<CR>
-nnoremap J :call smooth_scroll#down(1, 0, 1)<CR>
+nnoremap K /<C-R><C-W><CR>N
+" nnoremap K :call smooth_scroll#up(1, 0, 1)<CR>
+" nnoremap J :call smooth_scroll#down(1, 0, 1)<CR>
 
 "*****************************************************************************
 "" Custom configs
@@ -276,6 +264,8 @@ nnoremap J :call smooth_scroll#down(1, 0, 1)<CR>
 
 " let s:error_symbol = get(g:, 'airline#extensions#ale#error_symbol', 'E:')
 " let s:warning_symbol = get(g:, 'airline#extensions#ale#warning_symbol', 'W:')
+"
+let g:airline#extensions#ale#enabled = 1
 
 " function! s:airline_ale_count(cnt, symbol)
 "   return a:cnt ? a:symbol. a:cnt : ''
@@ -373,6 +363,7 @@ endif
 
 " Override All generated config above
 set number
+" set relativenumber
 set numberwidth=1
 set ruler
 set nowrap
@@ -390,7 +381,6 @@ set showmode
 set showcmd
 set listchars=tab:▸\ ,eol:¬
 set noswapfile
-set mouse=a
 
 "removes trailing spaces
 
@@ -399,20 +389,15 @@ noremap <Leader>p :CtrlP<CR>
 au BufNewFile,BufRead *.ejs set filetype=html
 let g:jsx_ext_required = 0
 
-let g:deoplete#enable_at_startup = 1
-let g:deoplete#omni#functions = {}
-let g:deoplete#omni#functions.javascript = [
-\ 'tern#Complete',
-\]
-
 set completeopt=longest,menuone,preview
-let g:deoplete#sources = {}
-let g:deoplete#sources['javascript.jsx'] = ['file', 'ternjs']
-let g:tern#command = ['tern']
-let g:tern#arguments = ['--persistent']
 
-" Open new tab, add terminal horizontal
-noremap <leader>t :<C-u>split<CR> :wincmd w<cr> :terminal <cr>
+" Completor
+" inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+" inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
+let g:completor_auto_trigger = 0
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<C-x>\<C-u>\<C-p>"
+let g:completor_node_binary = '/usr/local/bin/node'
 
 augroup vim-enter
   autocmd!
