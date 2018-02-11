@@ -18,7 +18,6 @@ call plug#begin()
 
 " Must also install powerline fonts
 " Plug 'carlitux/deoplete-ternjs', { 'for': ['javascript', 'javascript.jsx'] }
-" Plug 'dracula/vim'
 " Plug 'ervandew/supertab'
 " Plug 'gorodinskiy/vim-coloresque'
 " Plug 'terryma/vim-smooth-scroll'
@@ -53,6 +52,13 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'vim-scripts/grep.vim'
 Plug 'christoomey/vim-tmux-navigator'
 
+" For easy snippets
+Plug 'MarcWeber/vim-addon-mw-utils'
+Plug 'tomtom/tlib_vim'
+Plug 'garbas/vim-snipmate'
+Plug 'grvcoelho/vim-javascript-snippets'
+
+Plug 'honza/vim-snippets'
 call plug#end()
 
 "*****************************************************************************
@@ -85,12 +91,18 @@ let g:session_autoload = "no"
 let g:session_autosave = "no"
 let g:session_command_aliases = 1
 
-
+" Enable Mouse on Nvim per Default
+if has('nvim')
+  set mouse=a
+endif
 
 "*****************************************************************************
 "" Visual Settings
 "*****************************************************************************
-colorscheme gruvBox
+colorscheme gruvbox
+let g:gruvbox_termcolors = '256'
+let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+set background=dark
 
 " Search mappings: These will make it so that going to the next one in a
 " search will center on the line it's found in.
@@ -168,7 +180,6 @@ noremap <leader>z :GundoToggle<cr>
 inoremap jk <esc>
 inoremap kj <esc>
 noremap Q @q
-noremap > lnext
 
 "" Clear CTRLP cache
 map <leader>C :CtrlPClearCache<cr>

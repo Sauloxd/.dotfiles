@@ -1,5 +1,5 @@
 #!/bin/bash
-alias vv="vim ~/.dotfiles/vim/init.vim"
+alias vv="cd ~/.dotfiles; nvim aliases/.aliases"
 alias ss="source ~/.dotfiles/terminal/.bash_profile"
 
 #GIT ALIASES
@@ -9,8 +9,8 @@ alias gdfile="git diff-tree --no-commit-id --name-only -r"
 alias gd="git diff"
 
 #MAC Aliases
-alias v="vim"
-alias vi="vim"
+alias v="nvim"
+alias vi="nvim"
 alias sandbox="cd ~/sandbox/"
 
 #ZSH aliases
@@ -53,17 +53,23 @@ alias ga='git add'
 alias gh="git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all"
 alias whatport='lsof -i :3000'
 
-# trabalho
-## MFA
-alias a="npm run --prefix $HOME/development/revmobads/bashScripts auto-mfa;MFA_TIME_FINAL=$(expr $(date +%s) + 3600)"
-## DIR
-alias premium="cd /Users/sauloxd/Project/my-projects/premium"
-alias console="cd ~/development/revmobads/console"
-alias tshield="cd ~/development/revmobads/trafficShield"
-alias router="cd ~/development/revmobads/router"
-alias dspsShield="cd ~/development/revmobads/dspsShield"
-alias tester="cd ~/development/revmobads/tester"
-alias bashscripts="cd ~/development/revmobads/bashScripts"
-alias urlchecker="cd ~/development/revmobads/url-checker"
-alias dev="cd ~/development/revmobads"
-alias econsole="cd $HOME/elastiqx/console"
+alias deployprod="git push origin master:master; git push production master:master; heroku run rake db:migrate --app qultureapp"
+alias deploystaging="git push origin staging:staging; git push staging staging:master; heroku run rake db:migrate --app qulturedev"
+
+alias qr='node /Users/saulofuruta/QultureRocks/qr-cli/index.js'
+alias routes="rake routes"
+alias qrlint="git diff --name-only origin/develop | grep '.js' | xargs -I {} sh -c 'test -e {} && echo {}' | xargs eslint"
+alias qrBuildDocker="docker run -i --volume=/Users/saulofuruta/QultureRocks/qultureapp:/qultureapp --workdir='/qultureapp' --memory=2048m --entrypoint=/bin/bash joaob/docka"
+alias krails='kill -9 $(cat /Users/saulofuruta/QultureRocks/qultureapp/tmp/pids/server.pid)'
+
+gitBranchStatus() {
+  git for-each-ref --format="%(refname:short) %(upstream:short)" refs/heads | \
+    while read local remote
+    do
+      [ -z "$remote" ] && continue
+      git rev-list --left-right ${local}...${remote} -- 2>/dev/null >/tmp/git_upstream_status_delta || continue
+      LEFT_AHEAD=$(grep -c '^<' /tmp/git_upstream_status_delta)
+      RIGHT_AHEAD=$(grep -c '^>' /tmp/git_upstream_status_delta)
+      echo "$local (ahead $LEFT_AHEAD) | (behind $RIGHT_AHEAD) $remote"
+    done
+}

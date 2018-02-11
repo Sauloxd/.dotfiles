@@ -56,7 +56,11 @@ export PATH="$PATH:/Users/sauloxd/chromedrivers";
 export PATH="$PATH:/Users/sauloxd/Applications/apache-maven-3.3.9/bin";
 #
 # PSQL
-export PATH="$PATH:/Applications/Postgres.app/Contents/Versions/9.5/bin";
+# For Postgres.app 
+# export PATH="$PATH:/Applications/Postgres.app/Contents/Versions/9.5/bin";
+# For Homebrew version, use:
+# export PATH="$PATH:/usr/local/Cellar/postgresql@9.6/9.6.6/bin";
+export PATH="$PATH:/usr/local/Cellar/postgresql/10.1/bin";
 #
 # RACKET
 export PATH="$PATH:/Applications/Racket v6.8/bin";
@@ -71,9 +75,6 @@ export PATH=$PATH:"/Applications/Wine Stable.app/Contents/Resources/wine/bin";
 # Node
 export PATH=$PATH:"/usr/local/bin/node";
 #
-# NPM
-export PATH=~/.npm-global/bin:$PATH
-#
 # PhantomJS
 export PATH=$PATH:"$HOME/phantomjs/bin";
 #
@@ -85,3 +86,6 @@ export PATH="/usr/local/Cellar/python3/3.6.2/bin:$PATH"
 #
 # Tmux
 export PATH="/usr/local/Cellar/tmux/2.5/bin:$PATH"
+#
+# RVM
+export PATH="$PATH:$HOME/.rvm/bin"
