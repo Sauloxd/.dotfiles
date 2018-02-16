@@ -16,43 +16,45 @@ call plug#begin()
     endif
   endfunction
 
-" Must also install powerline fonts
-" Plug 'carlitux/deoplete-ternjs', { 'for': ['javascript', 'javascript.jsx'] }
-" Plug 'ervandew/supertab'
-" Plug 'gorodinskiy/vim-coloresque'
-" Plug 'terryma/vim-smooth-scroll'
-" Plug 'vim-scripts/closetag.vim'
-Plug 'w0rp/ale'
-Plug 'albfan/nerdtree-git-plugin'
-Plug 'bronson/vim-trailing-whitespace'
-Plug 'kien/ctrlp.vim'
+Plug 'w0rp/ale' " Async lint checker
+
+Plug 'kien/ctrlp.vim' " Fuzzy finder for files
+Plug 'vim-scripts/grep.vim' " ?
+
+Plug 'albfan/nerdtree-git-plugin' " Show M/A/D for tracked files
+Plug 'jistr/vim-nerdtree-tabs' " ?
+Plug 'scrooloose/nerdtree' " Nerd Tree
+
+Plug 'bronson/vim-trailing-whitespace' " Remove trailing whitespace on save
+Plug 'junegunn/vim-easy-align' "gaip=
+Plug 'mhinz/vim-startify' " Starting buffer with happy cow
+Plug 'simeji/winresizer' " c-e for window resize
+Plug 'sjl/gundo.vim' " Undo your shit
+Plug 'ternjs/tern_for_vim', { 'do': function('BuildTern') } " ?
+Plug 'maralla/completor.vim' " Contextual completor
+Plug 'ervandew/supertab' " magical tabj
+Plug 'tpope/vim-commentary' " ?
+Plug 'tpope/vim-fugitive' " Git power on vim
+Plug 'tpope/vim-surround' " ysaw' y surround around word '
+Plug 'christoomey/vim-tmux-navigator' " ?
+
+" Airline
+Plug 'vim-airline/vim-airline' " bottom toolbar
+Plug 'vim-airline/vim-airline-themes' " schemes
+
+" Color scheme
+Plug 'morhetz/gruvbox'
+
+" Syntax enhancer
 Plug 'hail2u/vim-css3-syntax'
 Plug 'jelera/vim-javascript-syntax'
-Plug 'jistr/vim-nerdtree-tabs'
-Plug 'junegunn/vim-easy-align' "gaip=
-Plug 'maksimr/vim-jsbeautify'
-Plug 'maralla/completor.vim'
-Plug 'mattn/emmet-vim'
-Plug 'mhinz/vim-startify'
-Plug 'morhetz/gruvbox'
-Plug 'mxw/vim-jsx'
-Plug 'pangloss/vim-javascript'
-Plug 'scrooloose/nerdtree'
 Plug 'sheerun/vim-polyglot'
-Plug 'simeji/winresizer'
-Plug 'sjl/gundo.vim'
-Plug 'ternjs/tern_for_vim', { 'do': function('BuildTern') }
-Plug 'ervandew/supertab'
-" Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-surround'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'vim-scripts/grep.vim'
-Plug 'christoomey/vim-tmux-navigator'
+Plug 'maksimr/vim-jsbeautify'
+" Plug 'mxw/vim-jsx' " polyglot already usees this and pangloss
+" Plug 'pangloss/vim-javascript'
 
 " For easy snippets
+Plug 'mattn/emmet-vim'
 Plug 'MarcWeber/vim-addon-mw-utils'
 Plug 'tomtom/tlib_vim'
 Plug 'garbas/vim-snipmate'
@@ -215,7 +217,7 @@ nnoremap <leader>. :lcd %:p:h<CR>
 "" ctrlp.vim
 set wildmode=list:longest,list:full
 set wildignore+=*.o,*.obj,.git,*.rbc,*.pyc,__pycache__
-let g:ctrlp_custom_ignore = '\v[\/](node_modules|target|dist)|(\.(swp|tox|ico|git|hg|svn))$'
+let g:ctrlp_custom_ignore = '\v[\/](node_modules|target|dist|vendor|db)|(\.(swp|tox|ico|git|hg|svn))$'
 let g:ctrlp_user_command = "find %s -type f | grep -Ev '"+ g:ctrlp_custom_ignore +"'"
 let g:ctrlp_use_caching = 1
 

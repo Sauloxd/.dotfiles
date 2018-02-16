@@ -39,9 +39,9 @@ if [ -s /usr/local/Cellar/autojump/22.5.1/share/autojump/autojump.${shell} ]; th
 fi
 
 #nvm
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+; export NVM_DIR="$HOME/.nvm"
+; [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+; [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # MongoDB
 export PATH=$PATH:"/Users/sauloxd/mongodb/bin";
@@ -79,7 +79,7 @@ export PATH=$PATH:"/usr/local/bin/node";
 export PATH=$PATH:"$HOME/phantomjs/bin";
 #
 # Terraform
-export PATH=$PATH:"$HOME/Terraform";
+; export PATH=$PATH:"$HOME/Terraform";
 #
 # Python
 export PATH="/usr/local/Cellar/python3/3.6.2/bin:$PATH"
@@ -88,4 +88,7 @@ export PATH="/usr/local/Cellar/python3/3.6.2/bin:$PATH"
 export PATH="/usr/local/Cellar/tmux/2.5/bin:$PATH"
 #
 # RVM
-export PATH="$PATH:$HOME/.rvm/bin"
+export PATH="$HOME/.rvm/gems/ruby-2.3.4/bin:$PATH"
+export PATH="$HOME/.rvm/gems/ruby-2.3.4@qultureapp/bin:$PATH"
+export PATH="$HOME/.rvm/gems/ruby-2.4.1/bin:$PATH"
+export PATH="$HOME/.rvm/bin:$PATH"
