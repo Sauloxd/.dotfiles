@@ -33,9 +33,9 @@ elif [ -s ~/.autojump/share/autojump/autojump.${shell} ]; then
 elif [ -s /usr/local/share/autojump/autojump.${shell} ]; then
     source /usr/local/share/autojump/autojump.${shell}
 fi
-# check custom install         
-if [ -s /usr/local/Cellar/autojump/22.5.1/share/autojump/autojump.${shell} ]; then         
-    source /usr/local/Cellar/autojump/22.5.1/share/autojump/autojump.${shell}         
+# check custom install
+if [ -s /usr/local/Cellar/autojump/22.5.1/share/autojump/autojump.${shell} ]; then
+    source /usr/local/Cellar/autojump/22.5.1/share/autojump/autojump.${shell}
 fi
 
 #nvm
@@ -56,11 +56,11 @@ export PATH="$PATH:/Users/sauloxd/chromedrivers";
 export PATH="$PATH:/Users/sauloxd/Applications/apache-maven-3.3.9/bin";
 #
 # PSQL
-# For Postgres.app 
+# For Postgres.app
 # export PATH="$PATH:/Applications/Postgres.app/Contents/Versions/9.5/bin";
 # For Homebrew version, use:
 # export PATH="$PATH:/usr/local/Cellar/postgresql@9.6/9.6.6/bin";
-export PATH="$PATH:/usr/local/Cellar/postgresql/10.1/bin";
+export PATH="$PATH:/usr/local/Cellar/postgresql/10.3/bin";
 #
 # RACKET
 export PATH="$PATH:/Applications/Racket v6.8/bin";
@@ -92,3 +92,10 @@ export PATH="$HOME/.rvm/gems/ruby-2.3.4/bin:$PATH"
 export PATH="$HOME/.rvm/gems/ruby-2.3.4@qultureapp/bin:$PATH"
 export PATH="$HOME/.rvm/gems/ruby-2.4.1/bin:$PATH"
 export PATH="$HOME/.rvm/bin:$PATH"
+
+#vscode
+export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+
+#ngrok
+export PATH="$PATH:/Users/saulofuruta/utils/ngrok"
+

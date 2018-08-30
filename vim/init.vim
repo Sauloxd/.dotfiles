@@ -50,6 +50,7 @@ Plug 'hail2u/vim-css3-syntax'
 Plug 'jelera/vim-javascript-syntax'
 Plug 'sheerun/vim-polyglot'
 Plug 'maksimr/vim-jsbeautify'
+Plug 'leshill/vim-json'
 " Plug 'mxw/vim-jsx' " polyglot already usees this and pangloss
 " Plug 'pangloss/vim-javascript'
 
@@ -94,9 +95,7 @@ let g:session_autosave = "no"
 let g:session_command_aliases = 1
 
 " Enable Mouse on Nvim per Default
-if has('nvim')
-  set mouse=a
-endif
+set mouse=a
 
 "*****************************************************************************
 "" Visual Settings
@@ -112,7 +111,7 @@ nnoremap n nzzzv
 nnoremap N Nzzzv
 
 "*****************************************************************************
-"" Syntax Related
+"" Syntax
 "*****************************************************************************
 
 syntax on
@@ -132,6 +131,8 @@ let g:closetag_xhtml_filenames = '*.xhtml,*.jsx,*.ejs'
 "" Abbreviations
 "*****************************************************************************
 inoreabbrev jsdoc /**<cr>📄📄📄📄📄📄📄📄📄📄<cr>@param {object} param.name - param.description<cr>@param {object} param.name - param.description<cr>@return {number} return.description<cr><backspace>*/<cr>
+inoremap \fn <C-R>=expand("%:t:r")<CR>
+
 abbrev :W :w
 abbrev :Q :q
 
@@ -217,11 +218,13 @@ nnoremap <leader>. :lcd %:p:h<CR>
 "" ctrlp.vim
 set wildmode=list:longest,list:full
 set wildignore+=*.o,*.obj,.git,*.rbc,*.pyc,__pycache__
-let g:ctrlp_custom_ignore = '\v[\/](node_modules|target|dist|vendor|db)|(\.(swp|tox|ico|git|hg|svn))$'
+let g:ctrlp_custom_ignore = '\v[\/](node_modules|target|dist|vendor|db|public)|(\.(swp|tox|ico|git|hg|svn))$'
 let g:ctrlp_user_command = "find %s -type f | grep -Ev '"+ g:ctrlp_custom_ignore +"'"
 let g:ctrlp_use_caching = 1
 
 noremap <leader>b :CtrlPBuffer<CR>
+noremap <leader><s-p> :CtrlP<CR>
+noremap <leader>p :CtrlPCurWD<CR>
 let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
 
 noremap YY "+y<CR>
@@ -379,7 +382,6 @@ set number
 " set relativenumber
 set numberwidth=1
 set ruler
-set nowrap
 set textwidth=200
 set formatoptions=tcqrn1
 set tabstop=2
@@ -394,10 +396,12 @@ set showmode
 set showcmd
 set listchars=tab:▸\ ,eol:¬
 set noswapfile
+set textwidth=80
+set wrapmargin=2
 
 "removes trailing spaces
 
-noremap <Leader>p :CtrlP<CR>
+" noremap <Leader>p :CtrlP<CR>
 
 au BufNewFile,BufRead *.ejs set filetype=html
 let g:jsx_ext_required = 0
@@ -409,7 +413,7 @@ set completeopt=longest,menuone,preview
 " inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 inoremap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
 let g:completor_auto_trigger = 0
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<C-x>\<C-u>\<C-p>"
+" inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<C-x>\<C-u>\<C-p>"
 let g:completor_node_binary = '/usr/local/bin/node'
 
 augroup vim-enter
@@ -420,3 +424,17 @@ augroup vim-enter
               \ |   NERDTree
               \ |   wincmd w
               \ | endif
+
+
+" QR maps
+inoreabbrev ictrl import controller from './0';<esc>F0xi<C-R>=expand("%:t:r")<CR>.ctrl.js
+inoreabbrev itmpl import templateUrl from './0';<esc>F0xi<C-R>=expand("%:t:r")<CR>.slim
+inoreabbrev inj 'ngInject';
+
+nnoremap <space>ls /__\=\.<cr>
+nnoremap <space>ll /__\=\.<cr>elywggO<esc>p``
+nnoremap <space>li 0iimport <esc>lywea from 'lodash/<esc>pa';<esc>j
+nnoremap <space>di 0iimport <esc>lv$y$a from '<esc>i./<esc>pa';<esc>j
+
+" Create component
+let g:componentFormula="import templateUrl from \'\';"
