@@ -13,6 +13,3 @@ for file in $HOME/.dotfiles/aliases/.aliases; do
 done;
 unset file;
 
-#REFACTOR this
-[[ -s "$HOME/.profile" ]] && source "$HOME/.profile" # Load the default .profile
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
