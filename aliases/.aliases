@@ -2,102 +2,13 @@
 alias vv="nvim ~/.dotfiles/vim/init.vim"
 alias aa="nvim ~/.dotfiles/aliases/.aliases"
 alias ss="source ~/.dotfiles/terminal/.bash_profile"
-
-#GIT ALIASES
-# alias gh="git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all"
-alias gap="g add -p"
-alias gdfile="git diff-tree --no-commit-id --name-only -r"
-alias gd="git diff"
-#MAC Aliases
 alias v="nvim"
-alias vi="nvim"
 alias sandbox="cd ~/sandbox/"
-
-#ZSH aliases
-
-# ls, the common ones I use a lot shortened for rapid fire usage
-alias g="git"
-alias la='ls -lAFh'   #long list,show almost all,show type,human readable
-alias lr='ls -tRFh'   #sorted by date,recursive,show type,human readable
-alias lt='ls -ltFh'   #long list,sorted by date,show type,human readable
-alias ll='ls -l'      #long list
-alias ldot='ls -ld .*'
-alias lS='ls -1FSsh'
-alias lart='ls -1Fcart'
-alias lrt='ls -1Fcrt'
-
-alias zshrc='$EDITOR ~/.zshrc' # Quick access to the ~/.zshrc file
-
 alias grep='grep --color'
 alias sgrep='grep -R -n -H -C 5 --exclude-dir={.git,.svn,CVS} '
-
-alias t='tail -f'
-alias tm='tmux ls'
-
-alias dud='du -d 1 -h'
-alias duf='du -sh *'
-alias fd='find . -type d -name'
-alias ff='find . -type f -name'
-
 alias h='history'
-alias hgrep="fc -El 0 | grep"
-alias help='man'
-alias p='ps -f'
-
-alias gst='git status -s'
 alias gblst='git branch --sort=committerdate'
-alias gb='git branch'
-alias gco='git checkout'
-alias gap='git add -p'
-alias gc='git commit'
-alias ga='git add'
 alias gh="git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all"
 alias whatport='lsof -i :3000'
-
-alias deployprod="git push origin master:master; git push production master:master; heroku run rake db:migrate --app qultureapp"
-alias deploystaging="git push origin staging:staging; git push staging staging:master; heroku run rake db:migrate --app qulturedev"
-
 alias qr='node /Users/saulofuruta/QultureRocks/qr-cli/index.js'
-alias routes="rake routes"
-alias qrlint="git diff --name-only origin/develop | grep '.js' | xargs -I {} sh -c 'test -e {} && echo {}' | xargs eslint"
-alias qrBuildDocker="docker run -i --volume=/Users/saulofuruta/QultureRocks/qultureapp:/qultureapp --workdir='/qultureapp' --memory=2048m --entrypoint=/bin/bash joaob/docka"
-alias krails='kill -9 $(cat /Users/saulofuruta/QultureRocks/qultureapp/tmp/pids/server.pid)'
-
-gitBranchStatus() {
-  git for-each-ref --format="%(refname:short) %(upstream:short)" refs/heads | \
-    while read local remote
-    do
-      [ -z "$remote" ] && continue
-      git rev-list --left-right ${local}...${remote} -- 2>/dev/null >/tmp/git_upstream_status_delta || continue
-      LEFT_AHEAD=$(grep -c '^<' /tmp/git_upstream_status_delta)
-      RIGHT_AHEAD=$(grep -c '^>' /tmp/git_upstream_status_delta)
-      echo "$local (ahead $LEFT_AHEAD) | (behind $RIGHT_AHEAD) $remote"
-    done
-}
-
-# It requries installed nodemon
-#   $ npm install -g nodemon
-#
-# Add this in your ~/.bash_profile
-#
-# How to use it?
-#
-# Run spec for user_spec.rb when file changed.
-#   $ wr spec/models/user_spec.rb
-#
-# Run spec for user_spec.rb:80 (only spec in line 80) when file changed.
-#   $ wr spec/models/user_spec.rb 80
-#
-# Use wsr if you want to run spring rspec to speed up. For instance:
-#   $ wsr spec/models/user_spec.rb 80
-function run_after_save {
-  prefix=$1
-  file=$2
-  line=$3
-  if [ -z "$line" ]; then
-    nodemon -x "$prefix $file" -w "$file"
-  else
-    nodemon -x "$prefix $file:$line" -w "$file"
-  fi
-}
-alias wr='run_after_save "rspec"'
+alias killwebpack="taskkill //pid \`netstat -aon | grep 3000 | grep -P '(?<=LISTENING).*' -o | grep -P '\\d*' -o\` //f"

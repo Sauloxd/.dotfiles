@@ -12,27 +12,17 @@ ENABLE_CORRECTION="true"
 # Red dot waiting for completion
 COMPLETION_WAITING_DOTS="true"
 
-# Would you like to use another custom folder than $ZSH/custom?
-# ZSH_CUSTOM=/path/to/new-custom-folder
-
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git)
+plugins+=(zsh-nvm)
 
 # User configuration
 #TODO: Whats going on...
 source $ZSH/oh-my-zsh.sh > /dev/null
 source ~/.bashrc
-
-# Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
-else
-  export EDITOR='vim'
-fi
-
 
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
@@ -42,7 +32,12 @@ export PATH="$PATH:$HOME/.rvm/bin"
 # [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/saulofuruta/google-cloud-sdk/path.zsh.inc' ]; then source '/Users/saulofuruta/google-cloud-sdk/path.zsh.inc'; fi
+# if [ -f '/Users/saulofuruta/google-cloud-sdk/path.zsh.inc' ]; then source '/Users/saulofuruta/google-cloud-sdk/path.zsh.inc'; fi
 
 # The next line enables shell command completion for gcloud.
-if [ -f '/Users/saulofuruta/google-cloud-sdk/completion.zsh.inc' ]; then source '/Users/saulofuruta/google-cloud-sdk/completion.zsh.inc'; fi
+# if [ -f '/Users/saulofuruta/google-cloud-sdk/completion.zsh.inc' ]; then source '/Users/saulofuruta/google-cloud-sdk/completion.zsh.inc'; fi
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+export FZF_DEFAULT_COMMAND='ag --ignore db/migrate -g ""'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
