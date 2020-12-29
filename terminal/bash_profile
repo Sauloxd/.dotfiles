@@ -5,7 +5,6 @@
 
 DOTFILES_DIR=$HOME/.dotfiles
 
-shell='zsh'
 export EDITOR="nvim"
 
 HELPERS=(
