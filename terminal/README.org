@@ -3,13 +3,12 @@
 #+begin_src bash
 function bash_config() {
   echo "Run from DOTFILES_DIR/terminal"
-  DOTFILES_DIR_TERMINAL=$(pwd)
-
-  ln -sf $DOTFILES_DIR_TERMINAL/zshrc $HOME/.zshrc
-  ln -sf $DOTFILES_DIR_TERMINAL/bashrc $HOME/.bashrc
-  ln -sf $DOTFILES_DIR_TERMINAL/bash_profile $HOME/.bash_profile
+  
+  ln -sf $DOTFILES_DIR/terminal/zshrc $HOME/.zshrc
+  ln -sf $DOTFILES_DIR/terminal/bashrc $HOME/.bashrc
+  ln -sf $DOTFILES_DIR/terminal/bash_profile $HOME/.bash_profile
   # Remove log when starting session
-  ln -sf $DOTFILES_DIR_TERMINAL/helpers/hushlogin $HOME/.hushlogin
+  ln -sf $DOTFILES_DIR/terminal/helpers/hushlogin $HOME/.hushlogin
 
   ls -lah $HOME | grep 'zshrc\|bashrc\|bash_profile\|hushlogin'
 }
@@ -33,11 +32,4 @@ function vscode() {
   # defaults delete -g ApplePressAndHoldEnabled
 }
 #+end_src
-
-* DEBUGGING
-** Log if which shell is loading
-Don't forget some software capture this once or always.
-doom emacs capture once (run `doom env` to recapture ENV)
-#+begin_src bash
-export SXD_TERM_OPTIONS=LOG
-#+end_src
+  
