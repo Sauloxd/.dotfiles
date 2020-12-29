@@ -1,12 +1,14 @@
-#The longest project a Developer will ever have
+# dotfiles
 
-"Your dotfiles will most likely be the longest project you ever work on."
-http://www.anishathalye.com/2014/08/03/managing-your-dotfiles/
+## Terminal (bash,zsh)
+ - git
+ - rvm
+ - fnm
+ - alias
+ - paths
 
-Organizing stuff like
+## Emacs doom
 
-.profile
-.zshrc
-.vimrc
+## Vim
 
-Still Learning, but hey, a thousand mile journey begins with a single step!
+## Tmux

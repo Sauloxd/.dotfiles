@@ -1,0 +1,99 @@
+# Dotfiles
+.dotfiles/
+.hushlogin
+.gitconfig
+.gitignore_global
+
+# MacOS dirs
+
+Applications/
+Desktop/
+Documents/
+Downloads/
+Library/
+Movies/
+Music/
+Pictures/
+Public/
+dev/
+
+
+# Credentials ignore
+.Trash/
+.aws/
+.travis/
+.ssh/
+
+
+# Editors configs
+## Make sure the part where you customize the config is inside/linked in .dotfiles
+.doom.d/
+.emacs.d/
+.vscode/
+.vim/
+.viminfo
+.NERDTreeBookmarks
+
+
+# Software libraries for general working (ex: Node, Ruby, Python)
+## Ruby
+.bundle/
+.gem/
+.rvm/
+
+## Nodejs
+### Compiles Nodejs addons written in C++ -> Machine code
+.node-gyp/
+.npm/
+.nvm/
+
+## Python
+.python_history
+
+# Shell configs
+.oh-my-zsh/
+.path
+.zshrc
+.qulturerc
+.bashrc
+.bash_profile
+.zsh_history
+.bash_history
+.tmux.conf
+.qr.tmux.conf
+.tmux-themepack/
+.irb-history
+.mkshrc
+.node_repl_history
+.psql_history
+.subversion
+
+# Global Apps
+## .local
+.local/
+.codestream/
+.iStats/
+.circleci/
+
+
+# I have no idea what is this
+.lesshst
+.zcompdump
+.zcompdump-pc\ do\ saulinho-5.3
+.secureConnect/
+
+# My files
+ebooks/
+
+# Karabiner
+.config/karabiner/automatic_backups/
+
+# docker
+.docker/
+
+# Printer
+.cups/
+
+#Games
+.config/
+
