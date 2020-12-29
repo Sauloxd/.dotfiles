@@ -13,3 +13,6 @@ export LC_ALL=en_US.UTF-8
 # C-e open command + vim
 autoload edit-command-line; zle -N edit-command-line
 bindkey '^e' edit-command-line
+
+# Use fd instead o find
+
