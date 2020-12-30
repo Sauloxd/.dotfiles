@@ -236,10 +236,21 @@ There are 2 packages:
 #+END_SRC
 
 ** lang
+To see watched files, see *lsp-logs* buffer
 #+begin_src emacs-lisp
   ;; (setq-hook! 'ruby-mode-hook +format-with-lsp nil)
 
+  (add-hook! lsp-mode
+    (defun do-something ()
+      (dolist (dir '(
+                     "[/\\\\]\\.rubocopcache"
+                     "[/\\\\]config/locales"
+                     ))
+        (push dir lsp-file-watch-ignored))
+      ))
 #+end_src
+
+#+RESULTS:
 
 ** Flycheck
 *** only check syntax on save
