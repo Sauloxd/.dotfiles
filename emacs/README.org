@@ -8,8 +8,9 @@ function emacs_config() {
   CUSTOM_DOOM_DIR=$HOME/.doom.d
 
   mkdir -p $CUSTOM_DOOM_DIR
-  
-  ln -sf $DOTFILES_DIR/emacs/config.org $CUSTOM_DOOM_DIR/config.org
+
+  # ln -sf $DOTFILES_DIR/emacs/config.org $CUSTOM_DOOM_DIR/config.org
+  ln -sf $DOTFILES_DIR/emacs/config.el $CUSTOM_DOOM_DIR/config.el
   ln -sf $DOTFILES_DIR/emacs/init.el $CUSTOM_DOOM_DIR/init.el
   ln -sf $DOTFILES_DIR/emacs/packages.el $CUSTOM_DOOM_DIR/packages.el
 
@@ -17,3 +18,5 @@ function emacs_config() {
 }
 
 #+end_src
+
+#+RESULTS:
