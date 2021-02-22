@@ -4,7 +4,7 @@
       org-agenda-files (list "~/org/roam" "~/org/journal")
       org-roam-directory "~/org/roam"
       org-src-tab-acts-natively t
-      org-tag-alist '(("urgent" . ?u) ("not_urgent" . ?U) ( "important" . ?i) ("not_important" . ?I)))
+      org-tag-alist '(("read" . ?r) ("urgent" . ?u) ("not_urgent" . ?U) ( "important" . ?i) ("not_important" . ?I)))
 
 ;; Templates for SPC-n-n
 (after! org-capture
@@ -22,6 +22,9 @@
        (experimenting '(
                         ;; Maybe adding some capture to build stack knowledge
                         ;; https://200ok.ch/posts/org-mode-capture-template-for-code-snippets.html
+                        ("s" "clock entry" entry (clock) "* %?\n%(ha/org-capture-code-snippet \"%F\")" :empty-lines 1)
+                        ("e" "clock plain" plain (clock) "%?\n%(ha/org-capture-code-snippet \"%F\")" :empty-lines 1)
+                        ("x" "cl: snipx" plain (file+headline "./roam/inbox.org" "Eng") "%?\n%(ha/org-capture-code-snippet \"%F\")" :empty-lines 1)
                       ))
 
        ;; Just for reference
@@ -41,16 +44,65 @@
                               ))
        )
 
-    (setq org-capture-templates (append todo-entries journal-entries))))
+    (setq org-capture-templates (append todo-entries experimenting journal-entries))))
+
+;; https://gitlab.com/howardabrams/spacemacs.d/-/blob/master/layers/ha-org/funcs.el#L367
+;; http://howardism.org/Technical/Emacs/capturing-content.html
+(defun ha/org-capture-code-snippet (f)
+  "Given a file, F, this captures the currently selected text
+within an Org SRC block with a language based on the current mode
+and a backlink to the function and the file."
+  (with-current-buffer (find-buffer-visiting f)
+    (let ((org-src-mode (replace-regexp-in-string "-mode" "" (format "%s" major-mode)))
+          (func-name (which-function)))
+      (ha/org-capture-fileref-snippet f "SRC" org-src-mode func-name))))
+(defun ha/org-capture-clip-snippet (f)
+  "Given a file, F, this captures the currently selected text
+within an Org EXAMPLE block and a backlink to the file."
+  (with-current-buffer (find-buffer-visiting f)
+    (ha/org-capture-fileref-snippet f "EXAMPLE" "" nil)))
+(defun ha/org-capture-fileref-snippet (f type headers func-name)
+  (let* ((code-snippet
+          (buffer-substring-no-properties (mark) (- (point) 1)))
+         (file-name   (buffer-file-name))
+         (file-base   (file-name-nondirectory file-name))
+         (line-number (line-number-at-pos (region-beginning)))
+         (initial-txt (if (null func-name)
+                          (format "From [[file:%s::%s][%s]]:"
+                                  file-name line-number file-base)
+                        (format "From ~%s~ (in [[file:%s::%s][%s]]):"
+                                func-name file-name line-number
+                                file-base))))
+    (format "
+   %s
+   #+BEGIN_%s %s
+%s
+   #+END_%s" initial-txt type headers code-snippet type)))
+
+
 
 (defun toa/print-org-outline-path (l)
   (org-format-outline-path (org-get-outline-path) l nil " > "))
 
 (setq org-agenda-custom-commands
       '(
-        ;; What I want
+        ("r" "Reading"
+         (
+          (tags-todo "read" (
+                                         (org-agenda-overriding-header "\nPending reading")
+                                         (org-agenda-remove-tags t)
+                                         (org-agenda-todo-keyword-format "")
+                                         (org-agenda-prefix-format
+                                          " %i %?-25(toa/print-org-outline-path 25) % s % e")))
+          ))
         ("z" "Eisenheuer Matrix"
          (
+          (tags-todo "-important-urgent-not_urgent-not_important-read" (
+                                                                   (org-agenda-overriding-header "\n⚠️ Uncategorized\n")
+                                                                   (org-agenda-remove-tags t)
+                                                                   (org-agenda-todo-keyword-format "")
+                                                                   (org-agenda-prefix-format
+                                                                    " %i %?-25(toa/print-org-outline-path 25) % s % e")))
           (tags-todo "urgent+important" (
                                          (org-agenda-overriding-header "\n🔥 Urgent + ⭐ ️Important")
                                          (org-agenda-remove-tags t)
@@ -77,21 +129,10 @@
                                                  (org-agenda-prefix-format
                                                   " %i %?-25(toa/print-org-outline-path 25) % s % e")))
 
-          (tags-todo "-important-urgent-not_urgent-not_important" (
-                                                                   (org-agenda-overriding-header "\n⚠️ Uncategorized\n")
-                                                                   (org-agenda-remove-tags t)
-                                                                   (org-agenda-todo-keyword-format "")
-                                                                   (org-agenda-prefix-format
-                                                                    " %i %?-25(toa/print-org-outline-path 25) % s % e")))
-          (tags "+TODO=\"DONE\"+CLOSED>\"<-1d>\""
-                ((org-agenda-overriding-header "DONE/CLOSED in the last 24h")
-                 (org-agenda-todo-keyword-format "%+4s")
-                 (org-agenda-prefix-format
-                  " %i %?-30(toa/print-org-outline-path 30) % s")
-                 ))
           ))))
 
 (defun sxd/eisenhower-matrix-agenda-view (&optional arg) (interactive) (org-agenda arg "z"))
+(defun sxd/reading-agenda-view (&optional arg) (interactive) (org-agenda arg "r"))
 
 (defun sxd/clipboard-image (file-name)
   "Paste image asking for file name, defaults with timestamp name."
@@ -123,4 +164,5 @@
        "k" 'sxd/remove-image))
 
 (map! :map sxd/kustom-keymap
-      "z" 'sxd/eisenhower-matrix-agenda-view)
+      "z" 'sxd/eisenhower-matrix-agenda-view
+      "r" 'sxd/reading-agenda-view)

@@ -63,6 +63,9 @@
       tide-tsserver-flags '("--serverMode partialSemantic" "--useInferredProjectPerProjectRoot"))
 ;; (setq-hook! 'ruby-mode-hook +format-with-lsp nil)
 
+;; Ruby
+(add-hook 'ruby-mode-hook (lambda () (rvm-activate-corresponding-ruby)))
+
 ;;; Hacks and fixes
 (add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
 
