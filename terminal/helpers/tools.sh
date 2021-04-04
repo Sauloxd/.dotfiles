@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# autojump https://github.com/wting/autojump
-[ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
-
 # Var needed for git to work https://gist.github.com/madeagency/79dc86e8aa09aa512af5
 export LC_CTYPE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8

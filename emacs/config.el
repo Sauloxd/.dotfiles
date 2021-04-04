@@ -6,13 +6,13 @@
 (setq evil-split-window-below t evil-vsplit-window-right t)
 
 ;; Theme
-(setq doom-theme 'doom-vibrant
-      doom-font (font-spec :family "Iosevka SS03" :size 14)
-      doom-variable-pitch-font (font-spec :family "Iosevka SS03"))
-
+(setq doom-theme 'doom-vibrant)
 
 (after! org
   (load! "+my-org"))
+
+(setq display-line-numbers-type nil)
+(remove-hook 'org-mode-hook #'org-superstar-mode)
 
 ;; Custom fn for pasting image
 ;;
@@ -49,22 +49,17 @@
 ;; _ as part of word_
 (add-hook 'after-change-major-mode-hook (lambda () (modify-syntax-entry ?_ "w")))
 
-;; Company
-;;
-(setq company-idle-delay 0.3
-      company-minimum-prefix-length 3
-      company-tooltip-limit 10)
-
-(after! robe (set-company-backend! 'ruby-mode '(company-dabbrev company-robe)))
-(after! org (set-company-backend! 'org-mode '(company-org-roam company-capf company-dabbrev company-yasnippet company-ispell)))
 
 ;;; Typescript
-(setq tide-tsserver-process-environment '("TSS_LOG=-level verbose -file /tmp/tss.log")
-      tide-tsserver-flags '("--serverMode partialSemantic" "--useInferredProjectPerProjectRoot"))
-;; (setq-hook! 'ruby-mode-hook +format-with-lsp nil)
+
+;; (setq tide-tsserver-process-environment '("TSS_LOG=-level verbose -file /tmp/tss.log")
+;;       tide-tsserver-flags '("--serverMode partialSemantic" "--useInferredProjectPerProjectRoot"))
+
+(setq lsp-enable-file-watchers nil)
+
 
 ;; Ruby
-(add-hook 'ruby-mode-hook (lambda () (rvm-activate-corresponding-ruby)))
+;; (add-hook 'ruby-mode-hook (lambda () (rvm-activate-corresponding-ruby)))
 
 ;;; Hacks and fixes
 (add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
@@ -89,3 +84,14 @@
   (setq flycheck-check-syntax-automatically '(mode-enabled save))
   (setq-default flycheck-disabled-checkers '(ruby-reek))
   (setq flycheck-disabled-checkers '(ruby-reek)))
+
+
+
+;; Enable mouse support
+(unless window-system
+  (global-set-key [mouse-4] (lambda ()
+                              (interactive)
+                              (scroll-down 1)))
+  (global-set-key [mouse-5] (lambda ()
+                              (interactive)
+                              (scroll-up 1))))

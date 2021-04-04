@@ -46,6 +46,8 @@
 
     (setq org-capture-templates (append todo-entries experimenting journal-entries))))
 
+(org-babel-do-load-languages 'org-babel-load-languages '((typescript . t)))
+
 ;; https://gitlab.com/howardabrams/spacemacs.d/-/blob/master/layers/ha-org/funcs.el#L367
 ;; http://howardism.org/Technical/Emacs/capturing-content.html
 (defun ha/org-capture-code-snippet (f)
@@ -78,8 +80,6 @@ within an Org EXAMPLE block and a backlink to the file."
    #+BEGIN_%s %s
 %s
    #+END_%s" initial-txt type headers code-snippet type)))
-
-
 
 (defun toa/print-org-outline-path (l)
   (org-format-outline-path (org-get-outline-path) l nil " > "))
@@ -132,6 +132,7 @@ within an Org EXAMPLE block and a backlink to the file."
           ))))
 
 (defun sxd/eisenhower-matrix-agenda-view (&optional arg) (interactive) (org-agenda arg "z"))
+
 (defun sxd/reading-agenda-view (&optional arg) (interactive) (org-agenda arg "r"))
 
 (defun sxd/clipboard-image (file-name)
@@ -166,3 +167,75 @@ within an Org EXAMPLE block and a backlink to the file."
 (map! :map sxd/kustom-keymap
       "z" 'sxd/eisenhower-matrix-agenda-view
       "r" 'sxd/reading-agenda-view)
+
+
+(require 'org-inlinetask)
+
+(defun scimax/org-return (&optional ignore)
+  "Add new list item, heading or table row with RET.
+A double return on an empty element deletes it.
+Use a prefix arg to get regular RET. "
+  (interactive "P")
+  (if ignore
+      (org-return)
+    (cond
+
+     ((eq 'line-break (car (org-element-context)))
+      (org-return-indent))
+
+     ;; Open links like usual, unless point is at the end of a line.
+     ;; and if at beginning of line, just press enter.
+     ((or (and (eq 'link (car (org-element-context))) (not (eolp)))
+          (bolp))
+      (org-return))
+
+     ;; It doesn't make sense to add headings in inline tasks. Thanks Anders
+     ;; Johansson!
+     ((org-inlinetask-in-task-p)
+      (org-return))
+
+     ;; checkboxes too
+     ((org-at-item-checkbox-p)
+      (org-insert-todo-heading nil))
+
+     ;; lists end with two blank lines, so we need to make sure we are also not
+     ;; at the beginning of a line to avoid a loop where a new entry gets
+     ;; created with only one blank line.
+     ((org-in-item-p)
+      (if (save-excursion (beginning-of-line) (org-element-property :contents-begin (org-element-context)))
+          (org-insert-heading)
+        (beginning-of-line)
+        (delete-region (line-beginning-position) (line-end-position))
+        (org-return)))
+
+     ;; org-heading
+     ((org-at-heading-p)
+      (if (not (string= "" (org-element-property :title (org-element-context))))
+          (progn (org-end-of-meta-data)
+                 (org-insert-heading-respect-content)
+                 (outline-show-entry))
+        (beginning-of-line)
+        (setf (buffer-substring
+               (line-beginning-position) (line-end-position)) "")))
+
+     ;; tables
+     ((org-at-table-p)
+      (if (-any?
+           (lambda (x) (not (string= "" x)))
+           (nth
+            (- (org-table-current-dline) 1)
+            (org-table-to-lisp)))
+          (org-return)
+        ;; empty row
+        (beginning-of-line)
+        (setf (buffer-substring
+               (line-beginning-position) (line-end-position)) "")
+        (org-return)))
+
+     ;; fall-through case
+     (t
+      (org-return)))))
+
+(map! :after evil-org
+      :map evil-org-mode-map
+      :i "RET" #'scimax/org-return)
