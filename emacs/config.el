@@ -40,11 +40,12 @@
 ;; moves to set tab width value
 (setq-default evil-shift-width custom-tab-width)
 (setq-default evil-shift-round custom-tab-width)
-(setq-default tab-width 2 standard-indent 2)
+(setq-default tab-width 2 standard-indent 2 indent-tabs-mode nil)
 
 (after! evil
   (map! :n "j" #'evil-next-visual-line
-        :n "k" #'evil-previous-visual-line))
+        :n "k" #'evil-previous-visual-line
+        :n "g~" 'evil-operator-string-inflection ))
 
 ;; _ as part of word_
 (add-hook 'after-change-major-mode-hook (lambda () (modify-syntax-entry ?_ "w")))
@@ -85,7 +86,9 @@
   (setq-default flycheck-disabled-checkers '(ruby-reek))
   (setq flycheck-disabled-checkers '(ruby-reek)))
 
-
+;; transparency
+;; (set-frame-parameter (selected-frame) 'alpha '(90 . 90))
+;; (add-to-list 'default-frame-alist '(alpha . (90 . 90)))
 
 ;; Enable mouse support
 (unless window-system
@@ -95,3 +98,5 @@
   (global-set-key [mouse-5] (lambda ()
                               (interactive)
                               (scroll-up 1))))
+;; enaables right option to create accents
+(setq mac-right-option-modifier 'none)

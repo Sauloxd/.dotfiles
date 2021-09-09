@@ -2,18 +2,19 @@
 
 # A Good reference
 # https://github.com/datakurre/nix-files/blob/master/home-configuration.nix
-# 
+#
+# Install using home-manager
+# `home-manager switch`
 {
   home = {
     packages = with pkgs; [
-      autojump
+      zsh fzf
       vim
       htop
       git
       iosevka
       ripgrep
       neovim
-      deno
       fd
     ];
     file = {
@@ -83,7 +84,6 @@
     home-manager = {
       enable = true;
     };
-    
-  }
+  };
 
 }

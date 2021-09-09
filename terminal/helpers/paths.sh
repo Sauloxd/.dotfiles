@@ -12,3 +12,4 @@ export PATH="$PATH:$HOME/.emacs.d/bin"
 
 export PATH="$PATH:/usr/local/opt/libpq/bin"
 
+export PATH="/usr/local/opt/sqlite/bin:$PATH"

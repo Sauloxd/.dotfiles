@@ -1,7 +1,7 @@
 ;;; ~/.dotfiles/emacs/+my-org.el -*- lexical-binding: t; -*-
 
 (setq org-directory "~/org"
-      org-agenda-files (list "~/org/roam" "~/org/journal")
+      org-agenda-files (list "~/org/roam" "~/org/journal" "~/org/mobile")
       org-roam-directory "~/org/roam"
       org-src-tab-acts-natively t
       org-tag-alist '(("read" . ?r) ("urgent" . ?u) ("not_urgent" . ?U) ( "important" . ?i) ("not_important" . ?I)))
@@ -63,6 +63,7 @@ and a backlink to the function and the file."
 within an Org EXAMPLE block and a backlink to the file."
   (with-current-buffer (find-buffer-visiting f)
     (ha/org-capture-fileref-snippet f "EXAMPLE" "" nil)))
+
 (defun ha/org-capture-fileref-snippet (f type headers func-name)
   (let* ((code-snippet
           (buffer-substring-no-properties (mark) (- (point) 1)))
@@ -76,60 +77,60 @@ within an Org EXAMPLE block and a backlink to the file."
                                 func-name file-name line-number
                                 file-base))))
     (format "
-   %s
-   #+BEGIN_%s %s
 %s
-   #+END_%s" initial-txt type headers code-snippet type)))
+#+BEGIN_%s %s
+%s
+#+END_%s" initial-txt type headers code-snippet type)))
 
 (defun toa/print-org-outline-path (l)
   (org-format-outline-path (org-get-outline-path) l nil " > "))
 
 (setq org-agenda-custom-commands
-      '(
-        ("r" "Reading"
-         (
-          (tags-todo "read" (
-                                         (org-agenda-overriding-header "\nPending reading")
-                                         (org-agenda-remove-tags t)
-                                         (org-agenda-todo-keyword-format "")
-                                         (org-agenda-prefix-format
-                                          " %i %?-25(toa/print-org-outline-path 25) % s % e")))
-          ))
-        ("z" "Eisenheuer Matrix"
-         (
-          (tags-todo "-important-urgent-not_urgent-not_important-read" (
-                                                                   (org-agenda-overriding-header "\n⚠️ Uncategorized\n")
-                                                                   (org-agenda-remove-tags t)
-                                                                   (org-agenda-todo-keyword-format "")
-                                                                   (org-agenda-prefix-format
-                                                                    " %i %?-25(toa/print-org-outline-path 25) % s % e")))
-          (tags-todo "urgent+important" (
+  '(
+     ("r" "Reading"
+       (
+         (tags-todo "read" (
+                             (org-agenda-overriding-header "\nPending reading")
+                             (org-agenda-remove-tags t)
+                             (org-agenda-todo-keyword-format "")
+                             (org-agenda-prefix-format
+                               " %i %?-25(toa/print-org-outline-path 25) % s % e")))
+         ))
+     ("z" "Eisenheuer Matrix"
+       (
+         (tags-todo "-important-urgent-not_urgent-not_important-read-idea" (
+                                                                        (org-agenda-overriding-header "\n⚠️ Uncategorized\n")
+                                                                        (org-agenda-remove-tags t)
+                                                                        (org-agenda-todo-keyword-format "")
+                                                                        (org-agenda-prefix-format
+                                                                          " %i %?-25(toa/print-org-outline-path 25) % s % e")))
+         (tags-todo "urgent+important" (
                                          (org-agenda-overriding-header "\n🔥 Urgent + ⭐ ️Important")
                                          (org-agenda-remove-tags t)
                                          (org-agenda-todo-keyword-format "")
                                          (org-agenda-prefix-format
-                                          " %i %?-25(toa/print-org-outline-path 25) % s % e")))
-          (tags-todo "urgent+not_important" (
+                                           " %i %?-25(toa/print-org-outline-path 25) % s % e")))
+         (tags-todo "urgent+not_important" (
                                              (org-agenda-overriding-header "\n🔥 Urgent + NOT ️important")
                                              (org-agenda-remove-tags t)
                                              (org-agenda-todo-keyword-format "")
                                              (org-agenda-prefix-format
-                                              " %i %?-25(toa/print-org-outline-path 25) % s % e")))
-          (tags-todo "not_urgent+important" (
+                                               " %i %?-25(toa/print-org-outline-path 25) % s % e")))
+         (tags-todo "not_urgent+important" (
                                              (org-agenda-overriding-header "\nNOT Urgent + ⭐ ️important")
                                              (org-agenda-remove-tags t)
                                              (org-agenda-todo-keyword-format "")
                                              (org-agenda-prefix-format
-                                              " %i %?-25(toa/print-org-outline-path 25) % s % e")))
+                                               " %i %?-25(toa/print-org-outline-path 25) % s % e")))
 
-          (tags-todo "not_urgent+not_important" (
+         (tags-todo "not_urgent+not_important" (
                                                  (org-agenda-overriding-header "\nNOT Urgent + NOT ️important")
                                                  (org-agenda-remove-tags t)
                                                  (org-agenda-todo-keyword-format "")
                                                  (org-agenda-prefix-format
-                                                  " %i %?-25(toa/print-org-outline-path 25) % s % e")))
+                                                   " %i %?-25(toa/print-org-outline-path 25) % s % e")))
 
-          ))))
+         ))))
 
 (defun sxd/eisenhower-matrix-agenda-view (&optional arg) (interactive) (org-agenda arg "z"))
 
