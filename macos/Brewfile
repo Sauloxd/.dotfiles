@@ -5,6 +5,7 @@ tap "homebrew/cask"
 
 # MacOS applications
 cask "karabiner-elements"
+cask "docker"
 
 # Brew CLI bins
 brew "fnm"

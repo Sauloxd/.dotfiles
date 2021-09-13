@@ -25,7 +25,7 @@ in
         text = "";
         force = true;
       };
-      ".gitignore" = {
+      ".gitignore_global" = {
         source = "${DOTFILES}/apps/git/gitignore";
         force = true;
       };

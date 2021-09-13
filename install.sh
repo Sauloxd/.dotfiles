@@ -18,7 +18,7 @@ export NIX_PATH=$HOME/.nix-defexpr/channels${NIX_PATH:+:}$NIX_PATH
 nix-shell '<home-manager>' -A install
 
 # 5. Clone dotfiles
-git clone https://github.com/Sauloxd/dotfiles.git
+git clone https://github.com/Sauloxd/.dotfiles.git
 
 # 6. Link home.nix
 ln -sf ~/dotfiles/macos/home.nix ~/.config/nixpkgs/home.nix
