@@ -1,8 +1,8 @@
 ;;; ~/.dotfiles/emacs/+my-org.el -*- lexical-binding: t; -*-
 
-(setq org-directory "~/org"
-      org-agenda-files (list "~/org/roam" "~/org/journal" "~/org/mobile")
-      org-roam-directory "~/org/roam"
+(setq org-directory "~/Google Drive/org"
+      org-agenda-files (list "~/Google Drive/org/roam" "~/Google Drive/org/journal" "~/Google Drive/org/mobile")
+      org-roam-directory "~/Google Drive/org/roam"
       org-src-tab-acts-natively t
       org-tag-alist '(("read" . ?r) ("urgent" . ?u) ("not_urgent" . ?U) ( "important" . ?i) ("not_important" . ?I)))
 
@@ -48,8 +48,8 @@
 
 (org-babel-do-load-languages 'org-babel-load-languages '((typescript . t)))
 
-;; https://gitlab.com/howardabrams/spacemacs.d/-/blob/master/layers/ha-org/funcs.el#L367
-;; http://howardism.org/Technical/Emacs/capturing-content.html
+;; https://gitlab.com/howardabrams/spacemacs.d/-/blob/master/layers/ha-Google\ Drive/org/funcs.el#L367
+;; http://howardism.Google\ Drive/org/Technical/Emacs/capturing-content.html
 (defun ha/org-capture-code-snippet (f)
   "Given a file, F, this captures the currently selected text
 within an Org SRC block with a language based on the current mode

@@ -21,7 +21,7 @@ nix-shell '<home-manager>' -A install
 git clone https://github.com/Sauloxd/.dotfiles.git
 
 # 6. Link home.nix
-ln -sf ~/dotfiles/macos/home.nix ~/.config/nixpkgs/home.nix
+ln -sf ~/.dotfiles/macos/home.nix ~/.config/nixpkgs/home.nix
 
 # 7. Run home-manager
 home-manager switch
@@ -29,5 +29,5 @@ home-manager switch
 # 8. Brew install
 brew install
 
-# 9. Install
+# 9. Install spacevim
 curl -sLf https://spacevim.org/install.sh | bash
