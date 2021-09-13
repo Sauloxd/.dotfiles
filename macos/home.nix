@@ -93,6 +93,7 @@ in
       enable = true;
       userEmail = "saulotoshi@gmail.com";
       userName = "sauloxd";
+      ignores = [".DS_Store"];
     };
 
     zsh = {
