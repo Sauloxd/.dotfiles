@@ -96,3 +96,6 @@ ebooks/
 
 #Games
 .config/
+
+# MACOS
+**/**/.DS_Store
