@@ -6,7 +6,7 @@ tap "homebrew/cask"
 # MacOS applications
 cask "karabiner-elements"
 cask "docker"
+cask "amethyst"
 
 # Brew CLI bins
 brew "fnm"
-brew "neovim"

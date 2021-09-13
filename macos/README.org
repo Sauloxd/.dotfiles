@@ -2,7 +2,6 @@
 ** Why NIX?
 TLDR; NIX is a sane way to consistently configure your env on config files (using the NIX syntax)
 *** For more, see https://serokell.io/blog/what-is-nix
-* SETUP
-#+begin_src bash
-darwin-rebuild switch -I darwin-config=$HOME/.dotfiles/macos/darwin-configuration.nix
-#+end_src
+
+* Max watchable files
+https://wilsonmar.github.io/maximum-limits/

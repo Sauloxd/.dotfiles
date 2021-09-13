@@ -1,14 +1,6 @@
-# dotfiles
+# Dotfiles
 
-## Terminal (bash,zsh)
- - git
- - rvm
- - fnm
- - alias
- - paths
+``` bash
+./install.sh
+```
 
-## Emacs doom
-
-## Vim
-
-## Tmux

@@ -11,7 +11,8 @@ in
 {
   home = {
     packages = with pkgs; [
-      zsh fzf
+      zsh
+      fzf
       vim
       htop
       git
