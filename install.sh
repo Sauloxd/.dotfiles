@@ -1,24 +1,33 @@
 #!/bin/bash
 
-ln -sf ~/.dotfiles/tmux/.tmux.conf ~/.tmux.conf
-ln -sf ~/.dotfiles/git/.gitignore_global ~/.gitignore_global
-ln -sf ~/.dotfiles/git/.gitignore ~/.gitignore
-ln -sf ~/.dotfiles/emacs/.ripgreprc ~/.ripgreprc
+# 1. Check for xcode install
+xcode-select --install
 
-ZSH_VIM_DIR=~/.oh-my-zsh/custom/plugins/zsh-nvm
-if [ ! -d $PUBLIC_LEGACY_DIR ]; then
-  echo "--> Installing zsh-nvm plugin"
-  git clone https://github.com/lukechilds/zsh-nvm $ZSH_VIM_DIR
-fi
+# 2. Install homebrew
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-NVIM_DIR=~/.config/nvim
-which nvim
-HAS_NEOVIM=$?
-if [[ HAS_NEOVIM -eq 0 ]]; then
-  echo "--> nvim detected"
-  mkdir -p ~/.config/nvim
-  ln -sf ~/.dotfiles/vim/init.vim ~/.config/nvim/init.vim
-fi
+# 3. Install Nix
+# If you already have /nix mounted, rermove it i diskutil and try again
+# @TODO: automate this step
+curl -L https://nixos.org/nix/install | sh -s -- --darwin-use-unencrypted-nix-store-volume
 
-echo "--> Installing plug"
-curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+# 4. Install home-manager
+nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
+nix-channel --update
+export NIX_PATH=$HOME/.nix-defexpr/channels${NIX_PATH:+:}$NIX_PATH
+nix-shell '<home-manager>' -A install
+
+# 5. Clone dotfiles
+git clone https://github.com/Sauloxd/dotfiles.git
+
+# 6. Link home.nix
+ln -sf ~/dotfiles/macos/home.nix ~/.config/nixpkgs/home.nix
+
+# 7. Run home-manager
+home-manager switch
+
+# 8. Brew install
+brew install
+
+# 9. Install
+curl -sLf https://spacevim.org/install.sh | bash
