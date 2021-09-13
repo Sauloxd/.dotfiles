@@ -20,6 +20,7 @@ in
       neovim
       fd
       emacs
+      tmux
     ];
     file = {
       ".hushlogin" = {
@@ -36,6 +37,13 @@ in
       };
       ".ssh/config".force = true;
 
+      #tmux
+      ".tmux.conf.local" = {
+        source = "${DOTFILES}/apps/tmux/tmux.conf.local";
+      };
+      ".tmux.conf" = {
+        source = "${DOTFILES}/apps/tmux/tmux.conf/.tmux.conf";
+      };
       # Emacs
       ".doom.d/+my-org.el" = {
         source = "${DOTFILES}/apps/emacs/+my-org.el";
