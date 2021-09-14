@@ -3,6 +3,10 @@ tap "homebrew/bundle"
 tap "homebrew/core"
 tap "homebrew/cask"
 
+# Brew CLI bins
+brew "tmuxinator"
+brew "neovim"
+
 # MacOS applications
 cask "karabiner-elements"
 cask "docker"
@@ -10,7 +14,5 @@ cask "amethyst"
 cask "google-backup-and-sync"
 cask "iterm2"
 cask "visual-studio-code"
+cask "steam"
 
-# Brew CLI bins
-brew "fnm"
-brew "neovim"
