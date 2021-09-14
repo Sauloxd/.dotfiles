@@ -1,6 +1,0 @@
-# Dotfiles
-
-``` bash
-./install.sh
-```
-

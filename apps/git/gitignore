@@ -99,3 +99,4 @@ ebooks/
 
 # MACOS
 **/**/.DS_Store
+**/**/.tmuxinator.yml

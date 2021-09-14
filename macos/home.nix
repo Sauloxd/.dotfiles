@@ -36,29 +36,14 @@ in
         force = true;
       };
       ".ssh/config".force = true;
-
-      #tmux
-      ".tmux.conf.local" = {
-        source = "${DOTFILES}/apps/tmux/tmux.conf.local";
-      };
       ".tmux.conf" = {
         source = "${DOTFILES}/apps/tmux/tmux.conf/.tmux.conf";
       };
+
       # Emacs
-      ".doom.d/+my-org.el" = {
-        source = "${DOTFILES}/apps/emacs/+my-org.el";
-        force = true;
-      };
-      ".doom.d/config.el" = {
-        source = "${DOTFILES}/apps/emacs/config.el";
-        force = true;
-      };
-      ".doom.d/init.el" = {
-        source = "${DOTFILES}/apps/emacs/init.el";
-        force = true;
-      };
-      ".doom.d/packages.el" = {
-        source = "${DOTFILES}/apps/emacs/packages.el";
+      ".doom.d" = {
+        recursive = true;
+        source = "${DOTFILES}/apps/emacs";
         force = true;
       };
     };
@@ -79,7 +64,15 @@ in
       enable = true;
       userEmail = "saulotoshi@gmail.com";
       userName = "sauloxd";
-      ignores = [".DS_Store"];
+      ignores = [".DS_Store" ".tmuxinator.yml"];
+    };
+
+    tmux = {
+      enable = true;
+      terminal = "xterm-256color";
+      tmuxinator.enable = true;
+      historyLimit = 100000;
+      keyMode = "vi";
     };
 
     # https://unix.stackexchange.com/questions/71253/what-should-shouldnt-go-in-zshenv-zshrc-zlogin-zprofile-zlogout
@@ -130,10 +123,14 @@ in
         defaults write com.microsoft.VSCodeInsiders ApplePressAndHoldEnabled -bool false
         # # If necessary, reset global default
         # defaults delete -g ApplePressAndHoldEnabled
+
+        function kill-on-port() {
+          kill -9 $(lsof -i tcp:$1 -t)
+        }
       '';
       shellAliases = {
         vv = "emacs ~/.dotfiles/macos/home.nix";
-        ss = "home-manager switch; brew bundle install; echo Done!";
+        ss = "echo Starting...; home-manager switch; cd ~; brew bundle install; cd -; echo Done!";
         h = "history";
         gblst = "git for-each-ref --sort=-committerdate --count=10 --format='%(refname:short)' refs/heads/";
         gh = "git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all";

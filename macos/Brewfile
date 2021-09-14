@@ -4,7 +4,6 @@ tap "homebrew/core"
 tap "homebrew/cask"
 
 # Brew CLI bins
-brew "tmuxinator"
 brew "neovim"
 
 # MacOS applications
