@@ -3,4 +3,4 @@ Installed via NIX and not via brew
 ** spotlight
 https://dlukes.github.io/emacs-daemon-osx.html
 ** org-mode
-*** Need google-drive
+*** Need google-drive installed (via Brewfile)
