@@ -1,133 +1,211 @@
 #+TITLE: sauloxd/doom
 #+STARTUP: content 
 
-* References of other cool configs
-** https://github.com/ztlevi/doom-config
-** https://justin.abrah.ms/dotfiles/emacs.html
-** https://github.com/psamim/dotfiles/blob/master/doom/config.el#L73
-** https://github.com/ztlevi/doom-config/blob/2ec57adcede94314b10a3244aaf7ae6ba6872cd9/%2Btext.el
-
 * User
-#+begin_src emacs-lisp
-(setq user-full-name "Saulo Toshiichi Furuta")
-(setq user-email-address "hi@saulo.dev")
+#+begin_src elisp :noeval
+(setq user-full-name "Saulo Toshiichi Furuta"
+      user-email-address "hi@saulo.dev")
 #+end_src
-
-#+RESULTS:
-: hi@saulo.dev
 
 * Bindings
+** Creates a custom keymap
 #+begin_src elisp
-(defun sxd/toggle-message-popup()
-  (interactive)
-  (cond ((+popup-windows) (+popup/close-all t))
-        ((display-buffer (get-buffer "*Messages*")))))
-
 (defvar sxd/kustom-keymap (make-sparse-keymap))
+(map! :leader :desc "Kustom" "k" sxd/kustom-keymap)
 
 (map! :map sxd/kustom-keymap
-      "a" '+fold/toggle
-      "m" 'sxd/toggle-message-popup)
+      ;; Conflicts with org mode +fold/toggle, fixes when trying to toggle inside a code-block of code
+      "a" '+fold/toggle)
 #+end_src
-
-#+RESULTS:
-
+** Group custom bindings
+#+begin_src elisp
+(map! :map sxd/kustom-keymap
+      ;; Conflicts with org mode +fold/toggle, fixes when trying to toggle inside a code-block of code
+      "a" '+fold/toggle)
+#+end_src
 * General
 ** Default buffer behaviour
 *** Use prog-mode instead of fundamental mode to get linumbers and multicursors working
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC elisp :noeval
 (setq-default major-mode 'prog-mode)
 (setq-default initial-major-mode 'prog-mode)
 (setq doom-scratch-initial-major-mode 'prog-mode)
 #+END_SRC
-
-#+RESULTS:
-: prog-mode
-
-** Go to window when split is created
-#+begin_src emacs-lisp
-(setq evil-split-window-below t
-      evil-vsplit-window-right t)
-
+* Editor
+** Spacing
+#+begin_src elisp :noeval
+(setq custom-tab-width 2)
 #+end_src
-
-#+RESULTS:
-: t
-
 * Appearance
 ** Themes
-#+BEGIN_SRC emacs-lisp
-(setq doom-theme 'doom-solarized-light)
+#+BEGIN_SRC elisp
+(setq doom-theme 'doom-vibrant)
 #+END_SRC
-
-#+RESULTS:
-
-** Font
-#+BEGIN_SRC emacs-lisp
-(setq doom-font (font-spec :family "Iosevka SS03" :size 14))
-(setq doom-variable-pitch-font (font-spec :family "Iosevka SS03"))
-#+END_SRC
-
-#+RESULTS:
-: #<font-spec nil nil Iosevka\ SS03 nil nil nil nil nil nil nil nil nil nil>
-
 * Org
-** Org files and directories
-#+name: org_variables
-#+BEGIN_SRC emacs-lisp
+** Values
+#+begin_src elisp
+;; Allow typescript to be used in code block
+(setq org-directory "~/org"
+      org-agenda-files (list "~/org/roam" "~/org/journal" "~/org/mobile")
+      org-roam-directory "~/org/roam"
+      org-src-tab-acts-natively t
+      org-tag-alist '(("read" . ?r) ("urgent" . ?u) ("not_urgent" . ?U) ( "important" . ?i) ("not_important" . ?I)))
+(org-babel-do-load-languages 'org-babel-load-languages '((typescript . t)))
+#+end_src
 
-(setq org-directory "/Volumes/GoogleDrive/My Drive/org")
-(setq org-agenda-files (list org-directory "/Volumes/GoogleDrive/My Drive/org/roam" "/Volumes/GoogleDrive/My Drive/org/journal"))
-(setq org-roam-directory "/Volumes/GoogleDrive/My Drive/org/roam")
-(setq org-src-tab-acts-natively t)
-#+END_SRC
-
-#+RESULTS: org_variables
-: t
-
-** Org tags
 ** Org refile
 Save after a refile just in case
-#+begin_src elisp
+#+begin_src elisp :noeval
 (advice-add 'org-refile :after 'org-save-all-org-buffers)
 (setq org-refile-targets '((nil :maxlevel . 3) ; nil is the current buffer
                            (org-agenda-files :maxlevel . 3)))
 #+end_src
-
-#+RESULTS:
-: ((nil :maxlevel . 3) (org-agenda-files :maxlevel . 3))
 
 ** Org capture custom templates
 #+begin_src elisp
 (after! org-capture
   (let
       (
+       ;; Important TODOs do as fast as possible
        (todo-entries '(
-                       ("b" "black hole" entry (file "./inbox.org") "* %?" :empty-lines 1)))
+                       ("t" "TODO" entry (file+headline "./roam/inbox.org" "PLEASE CLASSIFY EVERY TASK HERE") "* TODO %u %?" :prepend t :empty-lines 1 :kill-buffer t)
+                     ))
 
        (journal-entries '(
-                          ("j" "Journal" entry (file+datetree "./journal/2020.org")
-                           "**** [ ] %U - %? \n%a" :tree-type week :empty-lines 1)
+                          ("j" "Journal" entry (file+headline "./roam/inbox.org" "Notes")
+                           "* %? \n%a" :empty-lines 1)
                           ))
+       (experimenting '(
+                        ;; Maybe adding some capture to build stack knowledge
+                        ;; https://200ok.ch/posts/org-mode-capture-template-for-code-snippets.html
+                        ("s" "clock entry" entry (clock) "* %?\n%(ha/org-capture-code-snippet \"%F\")" :empty-lines 1)
+                        ("e" "clock plain" plain (clock) "%?\n%(ha/org-capture-code-snippet \"%F\")" :empty-lines 1)
+                        ("x" "cl: snipx" plain (file+headline "./roam/inbox.org" "Eng") "%?\n%(ha/org-capture-code-snippet \"%F\")" :empty-lines 1)
+                      ))
+
+       ;; Just for reference
+       (local-project-notes '(
+                              ("p" "Templates for projects")
+                                ;; Will use {project-root}/{todo,notes,changelog}.org, unless a
+                                ;; {todo,notes,changelog}.org file is found in a parent directory.
+
+                              ("pt" "Project todo" entry    ; {project-root}/todo.org
+                               (file+headline +org-capture-project-todo-file "Inbox") "* TODO %?\n%i" :prepend t :kill-buffer t)
+                              ("pn" "Project notes" entry   ; {project-root}/notes.org
+                               (file+headline +org-capture-project-notes-file "Inbox") "* TODO %?\n%i" :prepend t :kill-buffer t)
+                              ("pc" "Project changelog" entry ; {project-root}/changelog.org
+                               (file+headline +org-capture-project-notes-file "Unreleased")
+                               "* TODO %?\n%i" :prepend t :kill-buffer t)
+
+                              ))
        )
 
-    (setq org-capture-templates (append todo-entries journal-entries))))
+    (setq org-capture-templates (append todo-entries experimenting journal-entries))))
+;; Captures code with source
+(defun ha/org-capture-code-snippet (f)
+  "Given a file, F, this captures the currently selected text
+within an Org SRC block with a language based on the current mode
+and a backlink to the function and the file."
+  (with-current-buffer (find-buffer-visiting f)
+    (let ((org-src-mode (replace-regexp-in-string "-mode" "" (format "%s" major-mode)))
+          (func-name (which-function)))
+      (ha/org-capture-fileref-snippet f "SRC" org-src-mode func-name))))
+(defun ha/org-capture-clip-snippet (f)
+  "Given a file, F, this captures the currently selected text
+within an Org EXAMPLE block and a backlink to the file."
+  (with-current-buffer (find-buffer-visiting f)
+    (ha/org-capture-fileref-snippet f "EXAMPLE" "" nil)))
+
+(defun ha/org-capture-fileref-snippet (f type headers func-name)
+  (let* ((code-snippet
+          (buffer-substring-no-properties (mark) (- (point) 1)))
+         (file-name   (buffer-file-name))
+         (file-base   (file-name-nondirectory file-name))
+         (line-number (line-number-at-pos (region-beginning)))
+         (initial-txt (if (null func-name)
+                          (format "From [[file:%s::%s][%s]]:"
+                                  file-name line-number file-base)
+                        (format "From ~%s~ (in [[file:%s::%s][%s]]):"
+                                func-name file-name line-number
+                                file-base))))
+    (format "
+%s
+#+BEGIN_%s %s
+%s
+#+END_%s" initial-txt type headers code-snippet type)))
 #+end_src
 
-#+RESULTS:
-| l  | Learning |       |                                        |           |
-| lr | Ruby     | entry | (file+headline ./learn/ruby.org Inbox) | * Ruby %U |
+** Org Agenda
+#+begin_src elisp
+(defun toa/print-org-outline-path (l)
+  (org-format-outline-path (org-get-outline-path) l nil " > "))
 
+(setq org-agenda-custom-commands
+  '(
+     ("r" "Reading"
+       (
+         (tags-todo "read" (
+                             (org-agenda-overriding-header "\nPending reading")
+                             (org-agenda-remove-tags t)
+                             (org-agenda-todo-keyword-format "")
+                             (org-agenda-prefix-format
+                               " %i %?-25(toa/print-org-outline-path 25) % s % e")))
+         ))
+     ("z" "Eisenheuer Matrix"
+       (
+         (tags-todo "-important-urgent-not_urgent-not_important-read-idea" (
+                                                                        (org-agenda-overriding-header "\n⚠️ Uncategorized\n")
+                                                                        (org-agenda-remove-tags t)
+                                                                        (org-agenda-todo-keyword-format "")
+                                                                        (org-agenda-prefix-format
+                                                                          " %i %?-25(toa/print-org-outline-path 25) % s % e")))
+         (tags-todo "urgent+important" (
+                                         (org-agenda-overriding-header "\n🔥 Urgent + ⭐ ️Important")
+                                         (org-agenda-remove-tags t)
+                                         (org-agenda-todo-keyword-format "")
+                                         (org-agenda-prefix-format
+                                           " %i %?-25(toa/print-org-outline-path 25) % s % e")))
+         (tags-todo "urgent+not_important" (
+                                             (org-agenda-overriding-header "\n🔥 Urgent + NOT ️important")
+                                             (org-agenda-remove-tags t)
+                                             (org-agenda-todo-keyword-format "")
+                                             (org-agenda-prefix-format
+                                               " %i %?-25(toa/print-org-outline-path 25) % s % e")))
+         (tags-todo "not_urgent+important" (
+                                             (org-agenda-overriding-header "\nNOT Urgent + ⭐ ️important")
+                                             (org-agenda-remove-tags t)
+                                             (org-agenda-todo-keyword-format "")
+                                             (org-agenda-prefix-format
+                                               " %i %?-25(toa/print-org-outline-path 25) % s % e")))
+
+         (tags-todo "not_urgent+not_important" (
+                                                 (org-agenda-overriding-header "\nNOT Urgent + NOT ️important")
+                                                 (org-agenda-remove-tags t)
+                                                 (org-agenda-todo-keyword-format "")
+                                                 (org-agenda-prefix-format
+                                                   " %i %?-25(toa/print-org-outline-path 25) % s % e")))
+
+         ))))
+
+(defun sxd/eisenhower-matrix-agenda-view (&optional arg) (interactive) (org-agenda arg "z"))
+
+(defun sxd/reading-agenda-view (&optional arg) (interactive) (org-agenda arg "r"))
+
+(map! :map sxd/kustom-keymap
+      "z" 'sxd/eisenhower-matrix-agenda-view
+      "r" 'sxd/reading-agenda-view)
+#+end_src
 ** Org images
 [[file:../org/roam/20201110222725-images.org][Images]]
 #+begin_src elisp
 (defun sxd/clipboard-image (file-name)
+  "Paste image asking for file name, defaults with timestamp name."
   (interactive (list (read-string
                       (format "Img name (default: %s) " (format-time-string "%Y-%m-%d_%H-%M-%S.png"))
                       nil
                       nil
-                      (format-time-string "%Y-%m-%d_%H-%M-%S.png"))
-                     ))
+                      (format-time-string "%Y-%m-%d_%H-%M-%S.png"))))
+
   (let ((absolute-file-name (concat org-directory "/images/" file-name)))
     (shell-command (concat "pngpaste " absolute-file-name))
     (insert "#+ATTR_ORG: :width 400\n")
@@ -135,7 +213,7 @@ Save after a refile just in case
     (org-display-inline-images)))
 
 (defun sxd/remove-image ()
-  "Remove file associated with link, if file exists"
+  "Remove file associated with link, if file exists."
   (interactive)
   (if (org-in-regexp org-link-bracket-re 1)
       (let ((image-path (match-string 1)))
@@ -148,126 +226,39 @@ Save after a refile just in case
       (:map sxd/kustom-keymap
        "p" 'sxd/clipboard-image
        "k" 'sxd/remove-image))
-
-(map! :leader
-      :desc "Kustom" "k" sxd/kustom-keymap)
 #+end_src
-
-
 * Packages
-** Deft
-Quickly navigate in notes
-#+BEGIN_SRC emacs-lisp
-(setq deft-directory "~/org"
-      deft-recursive t
-      deft-use-filter-string-for-filename t)
-#+END_SRC
-
 ** Evil
-#+BEGIN_SRC emacs-lisp
-;; backspace deletes tabs
+*** Values
+#+begin_src elisp :noeval
+;; When deleting a TAB, delete it all instead of transforming to space, and deleting one
 (setq backward-delete-char-untabify-method 'hungry)
-(setq custom-tab-width 2)
-;; >>
-;; moves to set tab width value
-(setq-default evil-shift-width custom-tab-width)
-(setq-default evil-shift-round custom-tab-width)
-(setq-default tab-width 2 standard-indent 2)
-
+(setq-default
+  evil-shift-width custom-tab-width
+  evil-shift-round custom-tab-width
+  tab-width custom-tab-width
+  standard-indent custom-tab-width
+  indent-tabs-mode nil
+  ;; Go to window on split
+  evil-split-window-below t evil-vsplit-window-right t)
+#+end_src
+*** Bindings
+#+begin_src elisp :noeval
 (after! evil
   (map! :n "j" #'evil-next-visual-line
         :n "k" #'evil-previous-visual-line
-        ))
-
-;; _ as part of word_
+        :n "g~" 'evil-operator-string-inflection ))
+#+end_src
+*** Hacks
+#+begin_src elisp :noeval
+;; _ as part of word_, for ruby_users
 (add-hook 'after-change-major-mode-hook
           (lambda ()
             (modify-syntax-entry ?_ "w")))
-#+END_SRC
-
-*** Multiple cursors/editing
-There are 2 packages:
-- Simple multiedit. Select word -> R -> C(hange)/D(elete)/A(start insert mode end region)/I...etc -> write
-- Advanced mutliple cursor
-  C-v -> gzz -> has editing power with vim motions
-  Select word -> gzm
-
-** Company
-#+BEGIN_SRC emacs-lisp
-(setq company-idle-delay 0.3
-      company-minimum-prefix-length 3
-      company-tooltip-limit 10)
-
-(after! robe
-  (set-company-backend! 'ruby-mode '(company-dabbrev company-robe)))
-
-(after! org
-  (set-company-backend! 'org-mode '(company-org-roam company-capf company-dabbrev company-yasnippet company-ispell)))
-#+END_SRC
-
-** lang
-To see wat  ched files, see *lsp-logs* buffer
-#+begin_src emacs-lisp
-  (setq tide-tsserver-process-environment '("TSS_LOG=-level verbose -file /tmp/tss.log"))
-  (setq  tide-tsserver-flags '("--serverMode partialSemantic" "--useInferredProjectPerProjectRoot"))
-  ;; (setq-hook! 'ruby-mode-hook +format-with-lsp nil)
-
-  (add-hook! lsp-mode
-    (defun prepare-lsp-mode ()
-      (setq lsp-file-watch-threshold 15000)
-      (setq lsp-enable-links nil)
-      (dolist (dir '(
-                     "[/\\\\]\\.rubocopcache"
-                     "[/\\\\]\\.eslintcache"
-                     "[/\\\\]config/locales"
-                     "[/\\\\]tmp"
-                     "[/\\\\].useless"
-                     "[/\\\\]cypress/videos"
-                     "[/\\\\]cypress/fixtures"
-                     "[/\\\\]cypress/screenshots"
-                     "[/\\\\]__snapshots__"
-                     "[/\\\\]log"
-                     "[/\\\\].bundle"
-
-                     "[/\\\\]spec/"
-                     "[/\\\\]app/"
-
-                     ))
-        (push dir lsp-file-watch-ignored))
-      ))
 #+end_src
-
-#+RESULTS:
-| +lsp-display-guessed-project-root-h | +lsp-optimization-mode | +lookup--init-lsp-mode-handlers-h | do-something |
-
-** Flycheck
-*** only check syntax on save
-#+BEGIN_SRC emacs-lisp
-(after! flycheck
-  (setq flycheck-check-syntax-automatically '(mode-enabled save))
-  (setq-default flycheck-disabled-checkers '(ruby-reek))
-  (setq flycheck-disabled-checkers '(ruby-reek)))
-#+END_SRC
-
-** Magit
-#+BEGIN_SRC emacs-lisp
-(after! magit
-  (setq git-commit-summary-max-length 300))
-#+END_SRC
-
-#+RESULTS:
-: 300
-  
-** Which-key
-#+begin_src emacs-lisp
-(setq which-key-idle-delay 0.5)
-#+end_src
-
-#+RESULTS:
-: 0.5
 
 ** neotree
-#+begin_src elisp
+#+begin_src elisp :noeval
 (defun sxd/split-v-and-window-resize(&rest args)
   (apply 'neo-open-file-vertical-split args)
   (balance-windows))
@@ -283,13 +274,27 @@ To see wat  ched files, see *lsp-logs* buffer
         :n "v"   (neotree-make-executor :file-fn 'sxd/split-v-and-window-resize)))
 #+end_src
 
-#+RESULTS:
+* OS
+** MacOS
+#+begin_src elisp :noeval
+;; enables right option to create accents
+(setq mac-right-option-modifier 'none)
+#+end_src
 
-* TEMP FIXES
-*** MacOS flickering
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
-#+END_SRC
+** WSL
+#+begin_src elisp
+(defun sxd/wsl-copy (start end)
+  (interactive "r")
+  (shell-command-on-region start end "clip.exe")
+  (deactivate-mark))
 
-#+RESULTS:
-: ((inhibit-double-buffering . t) (right-divider-width . 1) (bottom-divider-width . 1) (vertical-scroll-bars) (tool-bar-lines . 0) (menu-bar-lines . 0) (left-fringe . 4) (right-fringe . 4))
+(map! :map sxd/kustom-keymap
+      ;; Conflicts with org mode +fold/toggle, fixes when trying to toggle inside a code-block of code
+      "y" 'sxd/wsl-copy)
+#+end_src
+
+* References of other cool configs
+** https://github.com/ztlevi/doom-config
+** https://justin.abrah.ms/dotfiles/emacs.html
+** https://github.com/psamim/dotfiles/blob/master/doom/config.el#L73
+** https://github.com/ztlevi/doom-config/blob/2ec57adcede94314b10a3244aaf7ae6ba6872cd9/%2Btext.el
