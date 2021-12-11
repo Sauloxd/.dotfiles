@@ -1,0 +1,19 @@
+- defaults:
+    link:
+      relink: true
+
+- clean: ['~']
+
+- link:
+    ~/.hushlogin: shell/hushlogin
+    ~/.zshrc: shell/zshrc
+    ~/.gitignore_global: apps/git/gitignore_global
+    ~/.gitconfig: apps/git/gitconfig
+
+    ~/.doom.d/:
+      path: apps/emacs/**
+      glob: true
+      create: true
+
+- shell:
+  - [git submodule update --init --recursive, Installing submodules]
