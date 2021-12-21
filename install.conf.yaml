@@ -6,7 +6,9 @@
 
 - link:
     ~/.hushlogin: shell/hushlogin
+    ~/.bashrc: shell/bashrc
     ~/.zshrc: shell/zshrc
+    ~/.tmux.conf.local: apps/tmux/tmux.conf.local
     ~/.gitignore_global: apps/git/gitignore_global
     ~/.gitconfig: apps/git/gitconfig
 

@@ -21,7 +21,9 @@
 #+begin_src elisp
 (map! :map sxd/kustom-keymap
       ;; Conflicts with org mode +fold/toggle, fixes when trying to toggle inside a code-block of code
-      "a" '+fold/toggle)
+      "a" '+fold/toggle
+      "l" '+format/buffer
+)
 #+end_src
 * General
 ** Default buffer behaviour
@@ -36,11 +38,17 @@
 #+begin_src elisp :noeval
 (setq custom-tab-width 2)
 #+end_src
+** Bindings
+#+begin_src elisp
+(map!
+  :n "M-s M-s" #'save-buffer)
+#+end_src
 * Appearance
 ** Themes
 #+BEGIN_SRC elisp
-(setq doom-theme 'doom-vibrant)
+(setq doom-theme 'doom-one)
 #+END_SRC
+
 * Org
 ** Values
 #+begin_src elisp

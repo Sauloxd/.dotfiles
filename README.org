@@ -59,11 +59,6 @@ curl -sLf https://spacevim.org/install.sh | bash
 *** Before calling install, you need to manually install the following [0/3]
 **** [ ] ZSH + Oh my zsh
 **** [ ] Emacs and Doom
-**** [ ] ...
+**** [ ] https://github.com/gpakosz/.tmux
 *** Just call `./install` and it should work properly
 
-* COMMENT Local Variables for auto-tangle :ARCHIVE:
-# Local Variables:
-# eval: (add-hook 'after-save-hook (lambda ()(org-babel-tangle)) nil t)
-# End:
-install.sh
