@@ -100,3 +100,6 @@ ebooks/
 # MACOS
 **/**/.DS_Store
 **/**/.tmuxinator.yml
+
+# EMACS
+**/**/.dir-locals.el

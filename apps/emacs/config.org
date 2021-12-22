@@ -41,7 +41,8 @@
 ** Bindings
 #+begin_src elisp
 (map!
-  :n "M-s M-s" #'save-buffer)
+  :n "M-s M-s" #'save-buffer
+)
 #+end_src
 * Appearance
 ** Themes
@@ -279,16 +280,11 @@ within an Org EXAMPLE block and a backlink to the file."
         :n "K"   #'neotree-select-previous-sibling-node
         :n "H"   #'neotree-select-up-node
         :n "L"   #'neotree-select-down-node
+        :n "R"   #'neotree-refresh
         :n "v"   (neotree-make-executor :file-fn 'sxd/split-v-and-window-resize)))
 #+end_src
 
 * OS
-** MacOS
-#+begin_src elisp :noeval
-;; enables right option to create accents
-(setq mac-right-option-modifier 'none)
-#+end_src
-
 ** WSL
 #+begin_src elisp
 (defun sxd/wsl-copy (start end)
@@ -301,8 +297,55 @@ within an Org EXAMPLE block and a backlink to the file."
       "y" 'sxd/wsl-copy)
 #+end_src
 
+** MacOS
+#+begin_src elisp :noeval
+;; enables right option to create accents
+(setq mac-right-option-modifier 'none)
+#+end_src
+
 * References of other cool configs
 ** https://github.com/ztlevi/doom-config
 ** https://justin.abrah.ms/dotfiles/emacs.html
 ** https://github.com/psamim/dotfiles/blob/master/doom/config.el#L73
 ** https://github.com/ztlevi/doom-config/blob/2ec57adcede94314b10a3244aaf7ae6ba6872cd9/%2Btext.el
+* Languagues
+** typescript
+#+begin_src elisp
+;; https://yarnpkg.com/getting-started/editor-sdks
+;; this allow  .dir-locals.el to set varaibles based on project folder
+;; this fix was trying to enable eslint in yarn2 hell
+(setq-default enable-local-variables t)
+;; By using these locals, we are defining
+
+;;; Directory Local Variables
+;;; For more information see (info "(emacs) Directory Variables")
+;; ((lsp-mode . ((lsp-file-watch-ignored-directories . "[/\\\\]\node_modules\\'"))))
+;; inside qultureapp
+#+end_src
+
+** eslint
+To configure ESLINT remember to:
+1. It's flycheck the glue between eslint and emacs
+2. Use ~flycheck-verify-setup~ (C-c ! v)
+3. Flycheck can only use 1 checker at time
+4. ~lsp~ checker needs a Language Server, and javascript-eslint does not (only the binary)
+5. lsp needs to use same vscode languageServer https://github.com/emacs-lsp/lsp-mode/wiki/LSP-ESlint-integration
+6. Only ~lsp~ checker can fix your file through ~lsp-eslint-apply-all-fixes~
+7. More help
+   https://www.reddit.com/r/emacs/comments/ivxxlp/help_lsp_mode_unable_to_start_eslint_server/
+
+#+begin_src elisp
+;; https://github.com/hlissner/doom-emacs/issues/5904#issuecomment-997045485
+;; After bumping lsp-mode (forcedly by going to ~/.emacs.d/.local/straight/repos/lsp-mode and pulling from master) this issue started happening
+(after! lsp-mode
+  (advice-remove #'lsp #'+lsp-dont-prompt-to-install-servers-maybe-a))
+
+;; https://github.com/emacs-lsp/lsp-mode/wiki/LSP-ESlint-integration
+(setq lsp-eslint-server-command
+   '("node"
+     "/home/sauloxd/.vscode-server/extensions/dbaeumer.vscode-eslint-2.2.2/server/out/eslintServer.js"
+     "--stdio"))
+
+(setq lsp-eslint-auto-fix-on-save t)
+
+#+end_src
