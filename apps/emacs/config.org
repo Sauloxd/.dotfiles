@@ -22,7 +22,7 @@
 (map! :map sxd/kustom-keymap
       ;; Conflicts with org mode +fold/toggle, fixes when trying to toggle inside a code-block of code
       "a" '+fold/toggle
-      "l" '+format/buffer
+      "l" 'lsp-eslint-fix-all
 )
 #+end_src
 * General
@@ -34,6 +34,10 @@
 (setq doom-scratch-initial-major-mode 'prog-mode)
 #+END_SRC
 * Editor
+** UI
+#+begin_src elisp :noeval
+(setq doom-font (font-spec :size 24))
+#+end_src
 ** Spacing
 #+begin_src elisp :noeval
 (setq custom-tab-width 2)
@@ -283,6 +287,18 @@ within an Org EXAMPLE block and a backlink to the file."
         :n "R"   #'neotree-refresh
         :n "v"   (neotree-make-executor :file-fn 'sxd/split-v-and-window-resize)))
 #+end_src
+** counsel, rg
+#+begin_src elisp
+(after! counsel
+  (setq counsel-rg-base-command "rg -M 240 --with-filename --no-heading --line-number --color never %s || true"))
+#+end_src
+
+#+RESULTS:
+: rg -M 240 --with-filename --no-heading --line-number --color never %s || true
+
+'project-find-regex
+#+RESULTS:
+: rg -M 240 --with-filename --no-heading --line-number --color never %s || true
 
 * OS
 ** WSL
@@ -310,17 +326,23 @@ within an Org EXAMPLE block and a backlink to the file."
 ** https://github.com/ztlevi/doom-config/blob/2ec57adcede94314b10a3244aaf7ae6ba6872cd9/%2Btext.el
 * Languagues
 ** typescript
+Remember to install typescript-language-server globally
+~npm install -g typescript-language-server~
 #+begin_src elisp
 ;; https://yarnpkg.com/getting-started/editor-sdks
 ;; this allow  .dir-locals.el to set varaibles based on project folder
 ;; this fix was trying to enable eslint in yarn2 hell
 (setq-default enable-local-variables t)
+(setq lsp-file-watch-threshold 10000)
 ;; By using these locals, we are defining
 
 ;;; Directory Local Variables
 ;;; For more information see (info "(emacs) Directory Variables")
 ;; ((lsp-mode . ((lsp-file-watch-ignored-directories . "[/\\\\]\node_modules\\'"))))
 ;; inside qultureapp
+;; https://github.com/hlissner/doom-emacs/issues/2860#issuecomment-611714320
+(after! dtrt-indent
+  (add-to-list 'dtrt-indent-hook-mapping-list '(typescript-mode javascript typescript-indent-level)))
 #+end_src
 
 ** eslint
@@ -349,3 +371,19 @@ To configure ESLINT remember to:
 (setq lsp-eslint-auto-fix-on-save t)
 
 #+end_src
+
+** ruby
+Remember to install solargraph globally
+~gem install solargraph~
+Remember to install in correct ruby version:
+~rbenv global <version>~
+
+#+begin_src elisp
+(after! robe
+  (set-company-backend! '(company-dabbrev company-robe ruby-mode))
+  (add-to-list 'projectile-project-root-files "CHANGELOG.md")
+  (add-to-list 'projectile-project-root-files "README.md"))
+#+end_src
+
+#+RESULTS:
+| README.md | CHANGELOG.md | Gemfile | package.json |

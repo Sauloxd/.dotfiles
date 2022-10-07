@@ -79,7 +79,6 @@ dev/
 # I have no idea what is this
 .lesshst
 .zcompdump
-.zcompdump-pc\ do\ saulinho-5.3
 .secureConnect/
 
 # My files
@@ -98,8 +97,10 @@ ebooks/
 .config/
 
 # MACOS
-**/**/.DS_Store
-**/**/.tmuxinator.yml
+.DS_Store
+.tmuxinator.yml
 
 # EMACS
-**/**/.dir-locals.el
+.dir-locals.el
+.log
+.projectile
