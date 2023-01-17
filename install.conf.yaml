@@ -1,12 +1,14 @@
 - defaults:
     link:
       relink: true
+      force: true
 
 - clean: ['~']
 
 - link:
     ~/.hushlogin: shell/hushlogin
     ~/.bashrc: shell/bashrc
+    ~/.ubuntu_bashrc: shell/ubuntu_bashrc
     ~/.zshrc: shell/zshrc
     ~/.tmux.conf.local: apps/tmux/tmux.conf.local
     ~/.gitignore_global: apps/git/gitignore_global

@@ -1,10 +1,7 @@
-setopt NO_NOMATCH
+export ZSH="/home/sfuruta/.oh-my-zsh"
 
-export ZSH="/home/sauloxd/.oh-my-zsh"
-
-export PATH="$PATH:$HOME/.emacs.d/bin"
-export PATH=$PATH:/usr/local/go/bin
-export PATH=$PATH:$HOME/go/bin
+export PATH="$PATH:"
+export PATH=$PATH:/usr/local/go/bin:$HOME/.emacs.d/bin:$HOME/go/bin
 
 export TERM='xterm-256color'
 
@@ -20,21 +17,15 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-eval "$(rbenv init -)"
-
-eval `keychain --quiet --eval --agents ssh id_ed25519`
-
-. /usr/share/autojump/autojump.sh
+[ -x "$(command -v rbenv)" ] && eval "$(rbenv init -)"
+[ -x "$(command -v keychain)" ] && eval `keychain --quiet --eval --agents ssh id_ed25519`
 
 alias ip="ip addr show eth0 | grep 'inet\b' | awk '{print $2}' | cut -d/ -f1"
-alias xdg-open=wsl-open
+# alias xdg-open=wsl-open
 # https://nickymeuleman.netlify.app/blog/gui-on-wsl2-cypress
 # export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2; exit;}'):0.0
-sudo /etc/init.d/dbus start &> /dev/null
-
+# sudo /etc/init.d/dbus start &> /dev/null
 # https://github.com/docker/buildx/issues/426#issuecomment-740419432
-
-export DOCKER_BUILDKIT=0
+# export DOCKER_BUILDKIT=0
 # direnv for qr-platform
-eval "$(direnv hook zsh)"
-export COLORTERM=truecolor
+[ -x "$(command -v direnv)" ] && eval "$(direnv hook zsh)"

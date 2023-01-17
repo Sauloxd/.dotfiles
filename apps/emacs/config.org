@@ -36,7 +36,7 @@
 * Editor
 ** UI
 #+begin_src elisp :noeval
-(setq doom-font (font-spec :size 24))
+(setq doom-font (font-spec :size 18))
 #+end_src
 ** Spacing
 #+begin_src elisp :noeval
