@@ -1,4 +1,4 @@
-export ZSH="/home/sfuruta/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 
 export PATH="$PATH:"
 export PATH=$PATH:/usr/local/go/bin:$HOME/.emacs.d/bin:$HOME/go/bin
@@ -29,3 +29,6 @@ alias ip="ip addr show eth0 | grep 'inet\b' | awk '{print $2}' | cut -d/ -f1"
 # export DOCKER_BUILDKIT=0
 # direnv for qr-platform
 [ -x "$(command -v direnv)" ] && eval "$(direnv hook zsh)"
+
+export PATH=$PATH:/Users/saulofuruta/.config/emacs/bin
+export PATH=/opt/homebrew/bin:$PATH

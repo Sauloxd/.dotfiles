@@ -13,8 +13,7 @@
     ~/.tmux.conf.local: apps/tmux/tmux.conf.local
     ~/.gitignore_global: apps/git/gitignore_global
     ~/.gitconfig: apps/git/gitconfig
-
-    ~/.doom.d/:
+    ~/.config/doom/:
       path: apps/emacs/**
       glob: true
       create: true

@@ -8,3 +8,10 @@
 **** [ ] Emacs and Doom
 **** [ ] Google Drive
 *** Just call `./install` and it should work properly
+
+** MACOS
+*** Install emacs
+**** Install [native compilation 29](https://www.reddit.com/r/emacs/comments/zr15cp/installing_emacs29_on_mac_m1/) (or any version compatible with doom emacs)
+**** Don't forget defaults were changed
+So if doom doesn't start when you open emacs, just be sure to remove ~/.doom.d and ~/.emacs.d
+It will then search for fallback in the correct place (~/.config/doom)
