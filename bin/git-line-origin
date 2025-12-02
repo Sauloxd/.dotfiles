@@ -1,0 +1,312 @@
+#!/usr/bin/env python3
+"""
+Find the original commit that introduced a specific line in a file.
+
+This tool uses git log -L to track line history through moves, edits, and renames.
+"""
+
+import argparse
+import subprocess
+import sys
+import re
+from pathlib import Path
+
+
+def run_git_command(args, cwd=None):
+    """Run a git command and return the output."""
+    try:
+        result = subprocess.run(
+            ['git'] + args,
+            cwd=cwd,
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        return result.stdout
+    except subprocess.CalledProcessError as e:
+        print(f"Error running git command: {e.stderr}", file=sys.stderr)
+        sys.exit(1)
+
+
+def get_github_repo_info():
+    """Get GitHub repository owner and name from git remote."""
+    try:
+        remote_url = run_git_command(['config', '--get', 'remote.origin.url']).strip()
+
+        # Parse different GitHub URL formats
+        # SSH: git@github.com:owner/repo.git
+        # HTTPS: https://github.com/owner/repo.git
+
+        if 'github.com' not in remote_url:
+            return None
+
+        # Extract owner/repo
+        match = re.search(r'github\.com[:/]([^/]+)/(.+?)(?:\.git)?$', remote_url)
+        if match:
+            owner, repo = match.groups()
+            return {'owner': owner, 'repo': repo}
+
+        return None
+    except:
+        return None
+
+
+def extract_pr_number(commit_message):
+    """Extract PR number from commit message (e.g., (#14641))."""
+    match = re.search(r'\(#(\d+)\)', commit_message)
+    if match:
+        return match.group(1)
+    return None
+
+
+def construct_github_pr_url(repo_info, pr_number):
+    """Construct GitHub PR URL."""
+    if repo_info and pr_number:
+        return f"https://github.com/{repo_info['owner']}/{repo_info['repo']}/pull/{pr_number}"
+    return None
+
+
+def get_line_content(file_path, line_number):
+    """Get the content of a specific line in a file."""
+    try:
+        with open(file_path, 'r') as f:
+            lines = f.readlines()
+            if line_number > len(lines):
+                print(f"Error: Line {line_number} is beyond end of file (file has {len(lines)} lines)", file=sys.stderr)
+                sys.exit(1)
+            return lines[line_number - 1].rstrip()
+    except FileNotFoundError:
+        print(f"Error: File not found: {file_path}", file=sys.stderr)
+        sys.exit(1)
+
+
+def extract_feature_symbol(line_content):
+    """Extract the feature symbol from a features.rb line."""
+    # Match pattern like: feature :abm, description: 'text'
+    match = re.search(r'feature\s+:(\w+)', line_content)
+    if match:
+        return match.group(1)
+    return None
+
+
+def find_feature_original_commit(file_path, line_number, feature_symbol, debug=False):
+    """
+    Find the commit that originally added a feature flag.
+
+    Uses git log -G to find when the feature was truly added, not just moved.
+    """
+    # Build pattern to match the feature declaration
+    pattern = f"feature :{feature_symbol}"
+
+    # Use git log -G with --follow to track across file renames
+    # Use the specific file path, not a glob pattern
+    log_output = run_git_command([
+        'log',
+        '-G', pattern,
+        '--all',
+        '--follow',  # Track file across renames
+        '--pretty=format:%H',
+        '--', file_path
+    ])
+
+    if not log_output:
+        return None
+
+    # Get all commit hashes (most recent first, oldest last)
+    commit_hashes = log_output.strip().split('\n')
+
+    if debug:
+        print(f"Found {len(commit_hashes)} commits", file=sys.stderr)
+
+    # Analyze commits from oldest to newest to find the first real addition
+    for commit_hash in reversed(commit_hashes):
+        if debug:
+            print(f"Checking commit {commit_hash[:8]}...", file=sys.stderr)
+
+        # Get the diff for this commit
+        diff_output = run_git_command([
+            'show',
+            commit_hash,
+            '--pretty=format:',
+            '-U0'  # No context lines
+        ])
+
+        # Parse the diff to see if this is a real addition
+        is_addition = False
+        is_deletion = False
+        in_features_file = False
+
+        for line in diff_output.split('\n'):
+            # Check if we're in a features.rb file
+            if line.startswith('+++') and 'features.rb' in line:
+                in_features_file = True
+            elif line.startswith('+++'):
+                in_features_file = False
+
+            if in_features_file:
+                # Check if the feature was added
+                if line.startswith('+') and not line.startswith('+++'):
+                    if pattern in line:
+                        is_addition = True
+                        if debug:
+                            print(f"  Found addition: {line[:60]}", file=sys.stderr)
+                # Check if the feature was also deleted (indicates a move within same commit)
+                if line.startswith('-') and not line.startswith('---'):
+                    if pattern in line:
+                        is_deletion = True
+                        if debug:
+                            print(f"  Found deletion: {line[:60]}", file=sys.stderr)
+
+        # If it was added but not deleted, this is the original commit
+        if is_addition and not is_deletion:
+            if debug:
+                print(f"  -> This is the original commit!", file=sys.stderr)
+            return commit_hash
+        elif debug and (is_addition or is_deletion):
+            print(f"  -> Skip (addition={is_addition}, deletion={is_deletion})", file=sys.stderr)
+
+    return None
+
+
+def find_original_commit(file_path, line_number, show_content=False, verbose=False):
+    """
+    Find the commit that originally introduced a line.
+
+    For features.rb, uses smart detection to find the real author.
+    For other files, uses git log -L with -M and -C flags.
+    """
+    # Get the line content for display
+    line_content = get_line_content(file_path, line_number)
+
+    # Special handling for features.rb
+    if file_path.endswith('features.rb'):
+        feature_symbol = extract_feature_symbol(line_content)
+        if feature_symbol:
+            original_commit_hash = find_feature_original_commit(file_path, line_number, feature_symbol, debug=verbose)
+            if original_commit_hash:
+                # Get commit details
+                commit_info = run_git_command([
+                    'show',
+                    original_commit_hash,
+                    '--no-patch',
+                    '--pretty=format:%H|%an|%ae|%ai|%s'
+                ]).strip()
+
+                commit_hash, author_name, author_email, date, message = commit_info.split('|', 4)
+
+                # Extract PR information
+                pr_number = extract_pr_number(message)
+                repo_info = get_github_repo_info()
+                pr_url = construct_github_pr_url(repo_info, pr_number) if pr_number else None
+
+                return {
+                    'commit': commit_hash,
+                    'author_name': author_name,
+                    'author_email': author_email,
+                    'date': date,
+                    'message': message,
+                    'line_content': line_content,
+                    'total_commits': 'N/A',
+                    'pr_number': pr_number,
+                    'pr_url': pr_url,
+                    'feature_symbol': feature_symbol
+                }
+
+    # Fall back to standard git log -L for non-features.rb or if pattern not found
+    log_output = run_git_command([
+        'log',
+        '-L', f'{line_number},{line_number}:{file_path}',
+        '-M',  # Detect renames
+        '-C',  # Detect copies and moves
+        '--no-patch',
+        '--pretty=format:%H|%an|%ae|%ai|%s'
+    ])
+
+    if not log_output:
+        print(f"No history found for line {line_number} in {file_path}", file=sys.stderr)
+        sys.exit(1)
+
+    # Parse commits (last one is the original)
+    commits = []
+    for line in log_output.strip().split('\n'):
+        if '|' in line:
+            commits.append(line)
+
+    if not commits:
+        print(f"Could not parse git log output for {file_path}:{line_number}", file=sys.stderr)
+        sys.exit(1)
+
+    # The LAST commit in the history is the one that introduced the line
+    original_commit = commits[-1]
+    commit_hash, author_name, author_email, date, message = original_commit.split('|', 4)
+
+    # Extract PR information
+    pr_number = extract_pr_number(message)
+    repo_info = get_github_repo_info()
+    pr_url = construct_github_pr_url(repo_info, pr_number) if pr_number else None
+
+    return {
+        'commit': commit_hash,
+        'author_name': author_name,
+        'author_email': author_email,
+        'date': date,
+        'message': message,
+        'line_content': line_content,
+        'total_commits': len(commits),
+        'pr_number': pr_number,
+        'pr_url': pr_url
+    }
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description='Find the original commit that introduced a line in a file.',
+        epilog='Example: git-line-origin app/models/lead.rb 100'
+    )
+    parser.add_argument('file', help='Path to the file')
+    parser.add_argument('line', type=int, help='Line number (1-indexed)')
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='Show additional information')
+    parser.add_argument('-c', '--show-content', action='store_true',
+                        help='Show the line content')
+
+    args = parser.parse_args()
+
+    # Verify we're in a git repository
+    try:
+        run_git_command(['rev-parse', '--git-dir'])
+    except SystemExit:
+        print("Error: Not in a git repository", file=sys.stderr)
+        sys.exit(1)
+
+    # Find the original commit
+    result = find_original_commit(args.file, args.line, args.show_content, args.verbose)
+
+    # Output results
+    print(f"File: {args.file}")
+    print(f"Line: {args.line}")
+
+    if args.show_content:
+        print(f"Content: {result['line_content']}")
+
+    if result.get('feature_symbol'):
+        print(f"Feature: :{result['feature_symbol']}")
+
+    print(f"\nOriginal commit: {result['commit'][:8]}")
+    print(f"Author: {result['author_name']} <{result['author_email']}>")
+    print(f"Date: {result['date']}")
+    print(f"Message: {result['message']}")
+
+    if result['pr_url']:
+        print(f"\nPull Request: {result['pr_url']}")
+    elif result['pr_number']:
+        print(f"\nPull Request: #{result['pr_number']} (GitHub repo not detected)")
+
+    if args.verbose:
+        if result['total_commits'] != 'N/A':
+            print(f"\nThis line has been modified in {result['total_commits']} commit(s)")
+        print(f"Full commit hash: {result['commit']}")
+
+
+if __name__ == '__main__':
+    main()

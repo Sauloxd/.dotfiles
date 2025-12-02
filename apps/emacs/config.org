@@ -19,11 +19,14 @@
 #+end_src
 ** Group custom bindings
 #+begin_src elisp
-(map! :map sxd/kustom-keymap
-      ;; Conflicts with org mode +fold/toggle, fixes when trying to toggle inside a code-block of code
-      "a" '+fold/toggle
-      "l" 'lsp-eslint-fix-all
-)
+  (map! :map sxd/kustom-keymap
+        ;; Conflicts with org mode +fold/toggle, fixes when trying to toggle inside a code-block of code
+        "a" '+fold/toggle
+        "l" 'lsp-eslint-fix-all
+        "t" 'minitest-verify
+        "s" 'minitest-verify-single
+
+  )
 #+end_src
 * General
 ** Default buffer behaviour
@@ -36,7 +39,7 @@
 * Editor
 ** UI
 #+begin_src elisp :noeval
-(setq doom-font (font-spec :size 14))
+  (setq doom-font (font-spec :size 16 :family "0xProto Nerd Font Mono"))
 #+end_src
 ** Spacing
 #+begin_src elisp :noeval

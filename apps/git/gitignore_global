@@ -104,3 +104,16 @@ ebooks/
 .dir-locals.el
 .log
 .projectile
+
+
+.pryrc
+
+
+/Users/saulofuruta/fireball/services/.cursor/rules/custom_*
+/Users/saulofuruta/fireball/services/.cursor/rules/custom_testing-guidelines.mdc
+/Users/saulofuruta/fireball/services/.cursor/rules/custom_**
+
+
+
+# Custom Cursor Rules
+**/.cursor/rules/custom_*

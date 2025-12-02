@@ -2,12 +2,13 @@ export ZSH="$HOME/.oh-my-zsh"
 
 export PATH="$PATH:"
 export PATH=$PATH:/usr/local/go/bin:$HOME/.emacs.d/bin:$HOME/go/bin
+export PATH="$HOME/.dotfiles/bin:$PATH"
 
 export TERM='xterm-256color'
 
-export EDITOR='vim'
+export EDITOR='nvim'
 
-ZSH_THEME="robbyrussell"
+ZSH_THEME="minimal"
 
 plugins=(git)
 
@@ -17,10 +18,33 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-[ -x "$(command -v rbenv)" ] && eval "$(rbenv init -)"
+
+
+# Automatically use .nvmrc if it exists
+autoload -U add-zsh-hook # Only needed for Zsh
+load-nvmrc() {
+  local nvmrc_path="$(nvm_find_nvmrc)"
+
+  if [ -n "$nvmrc_path" ]; then
+    local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
+
+    if [ "$nvmrc_node_version" = "N/A" ]; then
+      nvm install
+    elif [ "$nvmrc_node_version" != "$(nvm version)" ]; then
+      nvm use
+    fi
+  elif [ -n "$(PWD=$OLDPWD nvm_find_nvmrc)" ] && [ "$(nvm version)" != "$(nvm version default)" ]; then
+    nvm use default
+  fi
+}
+add-zsh-hook chpwd load-nvmrc # Only needed for Zsh
+load-nvmrc
+
+# [ -x "$(command -v rbenv)" ] && eval "$(rbenv init -)"
 [ -x "$(command -v keychain)" ] && eval `keychain --quiet --eval --agents ssh id_ed25519`
 
 alias ip="ip addr show eth0 | grep 'inet\b' | awk '{print $2}' | cut -d/ -f1"
+alias v="nvim"
 # alias xdg-open=wsl-open
 # https://nickymeuleman.netlify.app/blog/gui-on-wsl2-cypress
 # export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2; exit;}'):0.0
@@ -32,3 +56,202 @@ alias ip="ip addr show eth0 | grep 'inet\b' | awk '{print $2}' | cut -d/ -f1"
 
 export PATH=$PATH:/Users/saulofuruta/.config/emacs/bin
 export PATH=/opt/homebrew/bin:$PATH
+export PATH=$PATH:/Users/saulofuruta/.local/bin
+export PATH="$HOME/.cargo/bin:$PATH"
+if [ -d "$(brew --prefix)/opt/grep/libexec/gnubin" ]; then
+    PATH="$(brew --prefix)/opt/grep/libexec/gnubin:$PATH"
+fi
+# export OVERMIND_PROCFILE=$HOME/.dotfiles/Procfile
+
+alias rt="/Users/saulofuruta/fireball/services/bin/rails test"
+
+autoload -U edit-command-line
+# Emacs style
+zle -N edit-command-line
+bindkey '^e' edit-command-line
+
+bastion () {
+  if [ -z "$1" ]
+  then
+          profile='default'
+  elif [[ "dev" == "$1" ]]
+  then
+          profile='development'
+  elif [[ "prod" == "$1" ]]
+  then
+          profile='production'
+  else
+          profile=$1
+  fi
+  set -x
+  aws ssm start-session --target $(aws ssm describe-instance-information --filters '[{"Key": "tag:Name", "Values": ["BastionHost"]}]' --query "InstanceInformationList[*].InstanceId" --output text --profile $profile) --profile $profile
+  set +x
+}
+# bastion production
+# bastion development
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+
+# go to directories
+alias goto_fireball='cd /Users/saulofuruta/fireball/services'
+
+# procs
+alias wds="nametab WDS; colortab 0 255 0; goto_fireball; ./bin/foreman start webpack"
+alias web="nametab WEB; colortab 0 255 255; goto_fireball; ./bin/foreman start web"
+alias rpc="nametab RPC; colortab 255 255 0; goto_fireball; ./bin/foreman start rpc"
+alias go="nametab GO; colortab 0 255 0; goto_fireball; ./bin/foreman start go"
+alias worker='nametab WORKER; colortab 0 0 255; goto_fireball; ./bin/foreman start worker'
+alias worker1='nametab WORKER1; colortab 0 0 255; goto_fireball; ./bin/foreman start worker_node_1'
+alias worker2='nametab WORKER2; colortab 0 0 255; goto_fireball; ./bin/foreman start worker_node_2'
+alias worker3='nametab WORKER3; colortab 0 0 255; goto_fireball; ./bin/foreman start worker_node_3'
+alias worker4='nametab WORKER4; colortab 0 0 255; goto_fireball; ./bin/foreman start worker_node_4'
+alias worker5='nametab WORKER5; colortab 0 0 255; goto_fireball; ./bin/foreman start worker_node_5'
+alias worker6='nametab WORKER6; colortab 0 0 255; goto_fireball; ./bin/foreman start worker_node_6'
+alias metrics='nametab METRICS; colortab 0 255 255; goto_fireball; ./bin/foreman start metrics'
+alias grabber='nametab GRABBER; colortab 200 0 100; goto_fireball; ./bin/foreman start grabber'
+
+# name a tab, prefer all caps
+function nametab() {
+	echo -ne "\033]0;${1:-UNNAMED}\007"
+}
+
+# color a tab RGB
+function colortab() {
+	echo -e "\033]6;1;bg;red;brightness;${1:-255}\a \033]6;1;bg;green;brightness;${2:-255}\a \033]6;1;bg;blue;brightness;${3:-255}\a"
+}
+
+# start local procs in iTerm tabs
+# Add worker2 through worker6 to procList if you're working on teams besides org 1.
+function start_procs() {
+	osascript -e '
+		tell application "iTerm2"
+			tell current window
+				set t to current tab
+
+				set procList to {"wds", "web", "worker", "worker1", "rpc", "go", "metrics", "grabber"}
+
+				repeat with procName in procList
+					create tab with default profile
+					tell current session
+						write text procName
+					end tell
+				end repeat
+
+				tell t
+					select
+				end tell
+			end tell
+		end tell
+	'
+}
+
+alias goto_fastlaw='cd /Users/saulofuruta/github/fastlaw; nvm use 16.16'
+
+alias fl_dcompose="nametab DCOMPOSE; colortab 0 255 255; goto_fastlaw; docker compose start"
+alias fl_web="nametab WEB; colortab 0 255 255; goto_fastlaw; bundle exec rails s -p 5000"
+alias fl_worker="nametab WORKER; colortab 255 0 0; goto_fastlaw; bundle exec sidekiq -C config/sidekiq.yml"
+alias fl_webpack="nametab ASSETS; colortab 255 165 0; goto_fastlaw; bin/webpack-dev-server"
+alias fl_guard="nametab GUARD; colortab 128 0 128; goto_fastlaw; bundle exec guard --no-bundler-warning --no-interactions"
+
+# start fastlaw procs in iTerm tabs
+function fl_start_procs() {
+    cd /Users/saulofuruta/github/fastlaw
+    fl_dcompose
+    osascript -e '
+        tell application "iTerm2"
+            tell current window
+                set t to current tab
+
+                -- Define the list of processes for the fastlaw project
+                set procList to {"fl_web", "fl_worker", "fl_webpack", "fl_guard"} -- Replace with actual process names
+
+                repeat with procName in procList
+                    create tab with default profile
+                    tell current session
+                        write text procName
+                    end tell
+                end repeat
+
+                tell t
+                    select
+                end tell
+            end tell
+        end tell
+    '
+}
+
+# Fireball project aliases
+alias goto_fireball="cd /Users/saulofuruta/fireball/services"
+
+# Fireball development server aliases
+alias fb_setup="goto_fireball && bin/setup"
+alias fb_fix="goto_fireball && bin/fix"
+alias fb_docker_up="goto_fireball && mise run docker:up"
+alias fb_docker_down="goto_fireball && mise run docker:down"
+alias fb_web="goto_fireball && mise run dev:web"
+alias fb_webpack="goto_fireball && mise run dev:webpack"
+alias fb_worker="goto_fireball && mise run dev:worker"
+alias fb_worker_node="goto_fireball && mise run dev:worker-node-1"
+alias fb_rpc="goto_fireball && mise run dev:rpc"
+alias fb_go="goto_fireball && mise run dev:go"
+alias fb_grabber="goto_fireball && mise run dev:grabber"
+alias fb_sazerac="goto_fireball && mise run dev:sazerac"
+
+# Fireball database aliases
+alias fb_console="goto_fireball && mise run console"
+alias fb_postgres="goto_fireball && mise run db:postgres"
+alias fb_redis="goto_fireball && mise run db:redis"
+alias fb_clickhouse="goto_fireball && mise run db:clickhouse"
+
+# Fireball utility aliases
+alias fb_tasks="goto_fireball && mise tasks"
+alias fb_install="goto_fireball && mise install"
+alias fb_list="goto_fireball && mise list"
+alias fb_prometheus="goto_fireball && ./bin/run-prometheus-exporter"
+
+# Fireball test functions
+function fb_test_ruby() {
+    goto_fireball && mise run test:ruby "$1"
+}
+
+function fb_test_js() {
+    goto_fireball && mise run test:js "$1"
+}
+
+# Daily workflow helper
+function fb_daily_setup() {
+    echo "🔧 Running daily Fireball setup..."
+    fb_setup
+    echo "🐳 Starting Docker services..."
+    fb_docker_up
+    echo "✅ Ready to start development processes with 'start_procs'"
+}
+
+# start fireball procs in iTerm tabs
+function start_procs() {
+    goto_fireball
+    fb_docker_up
+    osascript -e '
+        tell application "iTerm2"
+            tell current window
+                set t to current tab
+
+                -- Define the list of processes for the fireball project
+                set procList to {"fb_web", "fb_webpack", "fb_worker", "fb_worker_node", "fb_rpc", "fb_go", "fb_grabber", "fb_sazerac", "fb_prometheus"}
+
+                repeat with procName in procList
+                    create tab with default profile
+                    tell current session
+                        write text procName
+                    end tell
+                end repeat
+
+                tell t
+                    select
+                end tell
+            end tell
+        end tell
+    '
+}
+
+# Mise - unified tool version manager
+eval "$(mise activate zsh)"

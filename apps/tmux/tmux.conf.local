@@ -21,4 +21,7 @@ bind-key -T copy-mode-vi MouseDown1Pane select-pane\; send-keys -X clear-selecti
 # can trigger copy-mode to exit when copy-mode is entered by MouseDrag1Pane
 bind -n MouseDrag1Pane if -Ft= '#{mouse_any_flag}' 'if -Ft= \"#{pane_in_mode}\" \"copy-mode -eM\" \"send-keys -M\"' 'copy-mode -eM'
 
+# Setting for overmind https://github.com/DarthSim/overmind/issues/155
+set-hook -g client-attached "run 'sess=\`tmux new -d -P -t \"#{session_name}\"\` && tmux switch-cli -t \"\${sess}#{window_index}\"'"
+
 set-option -g history-limit 100000
