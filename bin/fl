@@ -1,0 +1,68 @@
+#!/usr/bin/env zsh
+# Fastlaw CLI - Connect to staging/production environments
+
+set -e
+
+env="$1"
+service="${2:-web}"  # default to web if not specified
+
+# Validate environment
+if [[ "$env" != "staging" && "$env" != "production" && "$env" != "prod" ]]; then
+    echo "Usage: fl <environment> [service]"
+    echo ""
+    echo "Environments:"
+    echo "  staging     Connect to staging environment"
+    echo "  production  Connect to production environment"
+    echo "  prod        Alias for production"
+    echo ""
+    echo "Services:"
+    echo "  web         Main fastlaw pod (default)"
+    echo "  admin       Admin pod"
+    echo "  cms         CMS pod"
+    echo "  sidekiq     Sidekiq worker pod"
+    exit 1
+fi
+
+# Normalize prod -> production
+[[ "$env" == "prod" ]] && env="production"
+
+cluster_name="fastlaw-${env}"
+
+echo "Updating kubeconfig for ${cluster_name}..."
+aws eks update-kubeconfig --name "$cluster_name" --region eu-central-1
+
+echo ""
+echo "Fetching pods..."
+
+# Build grep pattern based on service
+case "$service" in
+    web)
+        # Match fastlaw-XXXXX-XXXXX but NOT fastlaw-admin, fastlaw-cms, fastlaw-sidekiq
+        pod_name=$(kubectl get pods --no-headers | awk '/^fastlaw-[a-z0-9]+-[a-z0-9]+/ && !/fastlaw-(admin|cms|sidekiq)/ {print $1; exit}')
+        ;;
+    admin)
+        pod_name=$(kubectl get pods --no-headers | awk '/^fastlaw-admin-/ {print $1; exit}')
+        ;;
+    cms)
+        pod_name=$(kubectl get pods --no-headers | awk '/^fastlaw-cms-/ {print $1; exit}')
+        ;;
+    sidekiq)
+        pod_name=$(kubectl get pods --no-headers | awk '/^fastlaw-sidekiq-/ {print $1; exit}')
+        ;;
+    *)
+        echo "Unknown service: $service"
+        echo "Available services: web, admin, cms, sidekiq"
+        exit 1
+        ;;
+esac
+
+if [[ -z "$pod_name" ]]; then
+    echo "Could not find pod for service: $service"
+    echo ""
+    echo "Available pods:"
+    kubectl get pods
+    exit 1
+fi
+
+echo "Connecting to pod: $pod_name"
+exec kubectl exec -it "$pod_name" -- sh

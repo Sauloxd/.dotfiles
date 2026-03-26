@@ -6,8 +6,13 @@
 	# View abbreviated SHA, description, and history graph of the latest 20 commits.
 	l = log --pretty=oneline -n 20 --graph --abbrev-commit
 
+        lg = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all
+
 	# View the current working tree status using the short format.
 	s = status -s
+
+	# Show git status + submodule branches with colored output.
+	ss = "!f() { git status \"$@\"; gitroot=$(git rev-parse --show-toplevel 2>/dev/null) || return; [ -f \"$gitroot/.gitmodules\" ] || return 0; printf '\\n\\033[1;36m=== Submodule Branches ===\\033[0m\\n'; git submodule foreach --quiet 'branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo \"DETACHED\"); expected=$(git config -f \"$toplevel/.gitmodules\" --get \"submodule.$name.branch\" 2>/dev/null || echo \"main\"); if [ \"$branch\" = \"DETACHED\" ]; then printf \"  \\033[0;31m%-20s\\033[0m -> \\033[0;31m%-25s\\033[0m \\033[0;31m[DETACHED HEAD]\\033[0m\\n\" \"$name\" \"$branch\"; elif [ \"$branch\" = \"$expected\" ]; then printf \"  \\033[0;32m%-20s\\033[0m -> \\033[0;32m%s\\033[0m\\n\" \"$name\" \"$branch\"; else printf \"  \\033[0;33m%-20s\\033[0m -> \\033[0;33m%-25s\\033[0m \\033[0;90m[expected: %s]\\033[0m\\n\" \"$name\" \"$branch\" \"$expected\"; fi'; }; f"
 
 	# Show the diff between the latest commit and the current state.
 	d = !"git diff-index --quiet HEAD -- || clear; git --no-pager diff --patch-with-stat"

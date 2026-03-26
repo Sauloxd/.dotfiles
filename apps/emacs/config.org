@@ -11,22 +11,16 @@
 ** Creates a custom keymap
 #+begin_src elisp
 (defvar sxd/kustom-keymap (make-sparse-keymap))
-(map! :leader :desc "Kustom" "k" sxd/kustom-keymap)
 
-(map! :map sxd/kustom-keymap
-      ;; Conflicts with org mode +fold/toggle, fixes when trying to toggle inside a code-block of code
-      "a" '+fold/toggle)
-#+end_src
-** Group custom bindings
-#+begin_src elisp
+(after! doom
+  (map! :leader :desc "Kustom" "k" sxd/kustom-keymap)
+
   (map! :map sxd/kustom-keymap
         ;; Conflicts with org mode +fold/toggle, fixes when trying to toggle inside a code-block of code
         "a" '+fold/toggle
         "l" 'lsp-eslint-fix-all
         "t" 'minitest-verify
-        "s" 'minitest-verify-single
-
-  )
+        "s" 'minitest-verify-single))
 #+end_src
 * General
 ** Default buffer behaviour
@@ -47,9 +41,9 @@
 #+end_src
 ** Bindings
 #+begin_src elisp
-(map!
-  :n "M-s M-s" #'save-buffer
-)
+(after! evil
+  (map!
+    :n "M-s M-s" #'save-buffer))
 #+end_src
 * Appearance
 ** Themes
@@ -243,6 +237,23 @@ Save after a refile just in case
 ;;        "p" 'sxd/clipboard-image
 ;;        "k" 'sxd/remove-image))
 #+end_src
+* Projectile
+** Use git superproject root instead of submodule root
+When working in a repo with submodules, projectile defaults to the submodule as the project root.
+This makes it use the parent repo root instead, giving a holistic view of all changes.
+#+begin_src elisp
+(after! projectile
+  (defun +projectile-root-in-superproject (dir)
+    "Detect git superproject and use it as project root."
+    (when-let* ((default-directory dir)
+                (super (string-trim
+                        (shell-command-to-string
+                         "git rev-parse --show-superproject-working-tree 2>/dev/null")))
+                (_ (not (string-empty-p super))))
+      (file-name-as-directory super)))
+  (add-to-list 'projectile-project-root-functions '+projectile-root-in-superproject))
+#+end_src
+
 * Packages
 ** Evil
 *** Values
@@ -311,9 +322,9 @@ Save after a refile just in case
   (shell-command-on-region start end "clip.exe")
   (deactivate-mark))
 
-(map! :map sxd/kustom-keymap
-      ;; Conflicts with org mode +fold/toggle, fixes when trying to toggle inside a code-block of code
-      "y" 'sxd/wsl-copy)
+(after! doom
+  (map! :map sxd/kustom-keymap
+        "y" 'sxd/wsl-copy))
 #+end_src
 
 ** MacOS
@@ -390,3 +401,17 @@ Remember to install in correct ruby version:
 
 #+RESULTS:
 | README.md | CHANGELOG.md | Gemfile | package.json |
+
+* Claude Code IDE
+Integration with Claude Code CLI for AI-assisted coding.
+Requires: Claude Code CLI installed (~npm install -g @anthropic-ai/claude-code~)
+
+#+begin_src elisp
+(use-package! claude-code-ide
+  :bind ("C-c C-'" . claude-code-ide-menu)
+  :config
+  (claude-code-ide-emacs-tools-setup)
+  (setq claude-code-ide-window-side 'right
+        claude-code-ide-window-width 90
+        claude-code-ide-focus-on-open t))
+#+end_src

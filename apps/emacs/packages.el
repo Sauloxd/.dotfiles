@@ -9,4 +9,6 @@
 
 ;; (package! exec-path-from-shell)
 
-
+;; Claude Code IDE - integrates Claude Code CLI with Emacs
+(package! claude-code-ide
+  :recipe (:host github :repo "manzaltu/claude-code-ide.el"))

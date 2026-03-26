@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(brew install:*)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "Bash(ls:*)",
+      "Bash(claude:*)",
+      "Bash(~/.config/emacs/bin/doom sync:*)",
+      "Bash(emacs:*)",
+      "Bash(~/.config/emacs/bin/doom doctor:*)",
+      "Bash(grep:*)",
+      "Bash(~/.config/emacs/bin/doom info:*)",
+      "Bash(~/.config/emacs/bin/doom run:*)",
+      "Bash(EMACSDIR=~/.config/emacs emacs:*)",
+      "Bash(~/.config/emacs/bin/doom build:*)",
+      "Bash(md5:*)"
+    ]
+  }
+}

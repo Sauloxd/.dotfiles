@@ -17,6 +17,15 @@
       path: apps/emacs/**
       glob: true
       create: true
+    ~/.config/karabiner/karabiner.json:
+      path: apps/karabiner/karabiner.json
+      create: true
+    ~/.claude/agents:
+      path: .claude/agents
+      create: true
+    ~/.claude/commands:
+      path: .claude/commands
+      create: true
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]

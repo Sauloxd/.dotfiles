@@ -1,0 +1,31 @@
+#compdef fl
+
+# Completion for fl (Fastlaw CLI)
+
+_fl() {
+    local -a envs services
+
+    envs=(
+        'staging:Connect to staging environment'
+        'production:Connect to production environment'
+        'prod:Alias for production'
+    )
+
+    services=(
+        'web:Main fastlaw pod'
+        'admin:Admin pod'
+        'cms:CMS pod'
+        'sidekiq:Sidekiq worker pod'
+    )
+
+    case $CURRENT in
+        2)
+            _describe 'environment' envs
+            ;;
+        3)
+            _describe 'service' services
+            ;;
+    esac
+}
+
+_fl "$@"
