@@ -26,6 +26,11 @@
     ~/.claude/commands:
       path: .claude/commands
       create: true
+    ~/.claude/CLAUDE.md: .claude/CLAUDE.md
+    ~/.vimrc: apps/vim/.vimrc
+    ~/.config/nvim/init.vim:
+      path: apps/vim/init.vim
+      create: true
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]

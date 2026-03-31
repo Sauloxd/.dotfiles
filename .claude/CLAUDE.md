@@ -2,12 +2,14 @@
 
 This file provides context for Claude Code when working with this dotfiles repository.
 
-## Core Principle
+## Core Principles
 
 **All configuration should be versioned in this dotfiles repository.** Never edit config files directly in their target locations (e.g., `~/.config/`). Instead:
 
 1. Edit the source file in `~/.dotfiles/`
 2. Run `./install` to apply changes via symlinks
+
+**When installing software, ALWAYS fetch and follow the official docs/webpage first.** Never rely on LLM training data for installation instructions — it may be outdated. If official docs are found, follow them directly without asking for consent. Only ask the user for consent on installation direction when no official docs are available and you'd be relying on training data.
 
 ## Repository Structure
 

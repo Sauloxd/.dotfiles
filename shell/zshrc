@@ -45,7 +45,7 @@ export DOOMPROFILE=default
 export PATH=/opt/homebrew/bin:$PATH
 export PATH=$PATH:/Users/saulofuruta/.local/bin
 export PATH="$HOME/.cargo/bin:$PATH"
-if [ -d "$(brew --prefix)/opt/grep/libexec/gnubin" ]; then
+if command -v brew &>/dev/null && [ -d "$(brew --prefix)/opt/grep/libexec/gnubin" ]; then
     PATH="$(brew --prefix)/opt/grep/libexec/gnubin:$PATH"
 fi
 # export OVERMIND_PROCFILE=$HOME/.dotfiles/Procfile
@@ -241,8 +241,8 @@ function start_procs() {
 }
 
 # Mise - unified tool version manager
-eval "$(/Users/sauloxd/.local/bin/mise activate zsh)"
-eval "$(mise activate zsh)"
+[ -x "/Users/sauloxd/.local/bin/mise" ] && eval "$(/Users/sauloxd/.local/bin/mise activate zsh)"
+command -v mise &>/dev/null && eval "$(mise activate zsh)"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -275,4 +275,9 @@ alias c='CLAUDE_CONFIG_DIR=~/.claude-personal claude --dangerously-skip-permissi
 alias ac='CLAUDE_CONFIG_DIR=~/.claude-org claude --dangerously-skip-permissions'
 
 
+alias cc='claude --dangerously-skip-permissions'
 ulimit -n 10240
+
+
+# Source secrets from .env if present
+[ -f ~/.dotfiles/.env ] && source ~/.dotfiles/.env

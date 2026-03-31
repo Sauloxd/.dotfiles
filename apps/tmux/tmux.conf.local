@@ -25,3 +25,10 @@ bind -n MouseDrag1Pane if -Ft= '#{mouse_any_flag}' 'if -Ft= \"#{pane_in_mode}\" 
 set-hook -g client-attached "run 'sess=\`tmux new -d -P -t \"#{session_name}\"\` && tmux switch-cli -t \"\${sess}#{window_index}\"'"
 
 set-option -g history-limit 100000
+
+# vi keys in copy mode
+setw -g mode-keys vi
+
+# vi-style copy to system clipboard
+bind -T copy-mode-vi v send -X begin-selection
+bind -T copy-mode-vi y send -X copy-pipe-and-cancel "xclip -selection clipboard"

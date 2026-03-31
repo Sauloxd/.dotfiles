@@ -7,5 +7,4 @@ case $- in
     *i*) ;;
       *) return;;
 esac
-echo "RUBY VERSION: $(ruby --version) <<"
 source ~/.ubuntu_bashrc
