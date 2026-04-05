@@ -118,6 +118,21 @@ Claude Code settings are also managed here:
 - `~/.dotfiles/.claude/commands/` - Custom slash commands
 - `~/.dotfiles/.claude/CLAUDE.md` - This file (symlinked to `~/.claude/CLAUDE.md`)
 
+## Agent Routing
+
+When working on software tasks, prefer delegating to BMC specialist agents:
+- `bmc-backend` — APIs, databases, business logic
+- `bmc-frontend` — UI, components, styling, accessibility
+- `bmc-devops` — Infrastructure, CI/CD, deployments
+- `bmc-security` — Security review, threat modeling
+- `bmc-code-review` — PR review, code quality
+- `bmc-testing` — Tests, debugging, QA
+- `bmc-product` — Requirements, specs, prioritization
+- `bmc-ai-agents` — Agent architecture, MCP, skills
+- `final-work-reviewer` — Final verification
+
+Pick the most appropriate agent based on the task. Use multiple agents in parallel when the task spans domains.
+
 ## Current Symlinks
 
 | Target | Source |

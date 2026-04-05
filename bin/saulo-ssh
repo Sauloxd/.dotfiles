@@ -217,6 +217,45 @@ cmd_ip() {
   printf "${GREEN}✓ Updated IP to $new_ip${NC}\n"
 }
 
+cmd_fwd() {
+  local port="$1"
+  load_config
+
+  if [[ -z "$USER" || -z "$IP" ]]; then
+    printf "${RED}✗ USER and IP must be configured. Run 'saulo-ssh' first.${NC}\n"
+    exit 1
+  fi
+
+  if is_port_ssh_forwarded "$port"; then
+    printf "${YELLOW}⊘ Port $port is already forwarded by an existing SSH tunnel${NC}\n"
+    return
+  fi
+
+  printf "${BOLD}Forwarding port ${GREEN}$port${NC} ${BOLD}via background tunnel to ${CYAN}$USER@$IP${NC}\n"
+  ssh -fNL "$port:localhost:$port" "$USER@$IP"
+  printf "${GREEN}✓ Port $port forwarded${NC} — open ${CYAN}http://localhost:$port${NC} on this machine\n"
+  printf "${YELLOW}Auto-closing in 5 minutes${NC}\n"
+
+  # Schedule auto-cleanup after 5 minutes
+  (sleep 300 && saulo-ssh unfwd "$port" 2>/dev/null) &
+  disown
+}
+
+cmd_unfwd() {
+  local port="$1"
+
+  local pid
+  pid=$(lsof -iTCP:"$port" -sTCP:LISTEN -nP 2>/dev/null | grep ssh | awk '{print $2}' | head -1)
+
+  if [[ -z "$pid" ]]; then
+    printf "${YELLOW}No SSH tunnel found on port $port${NC}\n"
+    return
+  fi
+
+  kill "$pid"
+  printf "${GREEN}✓ Stopped tunnel on port $port${NC} (pid $pid)\n"
+}
+
 cmd_dl() {
   local remote_path="$1"
   local local_path="${2:-$HOME/Downloads}"
@@ -242,6 +281,8 @@ cmd_help() {
   printf "  saulo-ssh add <port>               Add a port to forward\n"
   printf "  saulo-ssh rm <port>                Remove a forwarded port\n"
   printf "  saulo-ssh ip <ip>                  Update the host IP\n"
+  printf "  saulo-ssh fwd <port>               Forward a port via background tunnel (for OAuth, etc.)\n"
+  printf "  saulo-ssh unfwd <port>             Stop a background port forward\n"
   printf "  saulo-ssh dl <remote> [local]      Download files via scp (default: ~/Downloads)\n"
   printf "  saulo-ssh help                     Show this help\n"
   printf "\n${BOLD}Config:${NC} $CONFIG_FILE\n"
@@ -253,6 +294,8 @@ case "${1:-}" in
   add)      cmd_add "${2:?Usage: saulo-ssh add <port>}" ;;
   rm)       cmd_rm "${2:?Usage: saulo-ssh rm <port>}" ;;
   ip)       cmd_ip "${2:?Usage: saulo-ssh ip <new-ip>}" ;;
+  fwd)      cmd_fwd "${2:?Usage: saulo-ssh fwd <port>}" ;;
+  unfwd)    cmd_unfwd "${2:?Usage: saulo-ssh unfwd <port>}" ;;
   help|-h|--help) cmd_help ;;
   "")       cmd_connect ;;
   dl)       cmd_dl "${2:?Usage: saulo-ssh dl <remote-path> [local-path]}" "${3:-}" ;;
