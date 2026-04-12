@@ -281,3 +281,6 @@ ulimit -n 10240
 
 # Source secrets from .env if present
 [ -f ~/.dotfiles/.env ] && source ~/.dotfiles/.env
+
+ export PATH="$HOME/.bun/bin:$PATH"
+

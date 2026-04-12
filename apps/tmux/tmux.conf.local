@@ -26,6 +26,11 @@ set-hook -g client-attached "run 'sess=\`tmux new -d -P -t \"#{session_name}\"\`
 
 set-option -g history-limit 100000
 
+# Enable truecolor (24-bit) support so themes render correctly
+set -ag terminal-overrides ",xterm-256color:Tc,tmux-256color:Tc"
+set -g default-terminal "tmux-256color"
+set-environment -g COLORTERM truecolor
+
 # Prevent tmux from automatically renaming windows
 set-window-option -g automatic-rename off
 
@@ -43,10 +48,30 @@ bind -T copy-mode-vi y send -X copy-pipe-and-cancel "xclip -selection clipboard"
 # Allow OSC 52 clipboard passthrough (Emacs tty +osc -> tmux -> iTerm2)
 set -g allow-passthrough on
 
-# -- theme overrides (gpakosz/.tmux) -----------------------------------------
+# -- Catppuccin theme with OS-aware accent (green on Linux, red on macOS) ----
 
-# Change the default green accent to red
-tmux_conf_theme_colour_11="#d70000"   # red (was green #5fff00)
+set -g @plugin 'catppuccin/tmux#v2.3.0'
+set -g @catppuccin_flavor 'mocha'
+set -g @catppuccin_window_status_style 'rounded'
 
-# Also change the light blue accent to red for consistency
-tmux_conf_theme_colour_4="#d70000"    # red (was light blue #00afff)
+# OS-aware accent color
+if-shell 'test "$(uname)" = "Darwin"' \
+  'set -g @catppuccin_pane_active_border_style "fg=#d70000"; \
+   set -g @catppuccin_window_current_number_color "#d70000"; \
+   set -g @catppuccin_window_current_text_color "#d70000"' \
+  'set -g @catppuccin_pane_active_border_style "fg=#fab387"; \
+   set -g @catppuccin_window_current_number_color "#fab387"; \
+   set -g @catppuccin_window_current_text_color "#fab387"'
+
+# Status bar modules
+set -g status-right-length 100
+set -g status-left-length 100
+set -g status-left ""
+set -g status-right "#{E:@catppuccin_status_session}"
+
+# TPM
+set -g @plugin 'tmux-plugins/tpm'
+run '~/.tmux/plugins/tpm/tpm'
+
+# Override active window text font to black (after TPM loads the theme)
+set -gF @_ctp_w_text_style "#[fg=#000000,bg=#{@catppuccin_window_current_text_color}]"
