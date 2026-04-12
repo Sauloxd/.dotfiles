@@ -29,8 +29,9 @@
       create: true
     ~/.claude/CLAUDE.md: .claude/CLAUDE.md
     ~/.vimrc: apps/vim/.vimrc
-    ~/.config/nvim/init.vim:
-      path: apps/vim/init.vim
+    ~/.config/nvim/:
+      path: apps/nvim/**
+      glob: true
       create: true
 
 - shell:
