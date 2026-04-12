@@ -10,6 +10,7 @@
     ~/.bashrc: shell/bashrc
     ~/.ubuntu_bashrc: shell/ubuntu_bashrc
     ~/.zshrc: shell/zshrc
+    ~/.tmux.conf: apps/tmux/tmux.conf
     ~/.tmux.conf.local: apps/tmux/tmux.conf.local
     ~/.gitignore_global: apps/git/gitignore_global
     ~/.gitconfig: apps/git/gitconfig
