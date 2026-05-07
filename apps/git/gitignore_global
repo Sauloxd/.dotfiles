@@ -49,6 +49,7 @@ dev/
 
 ## Python
 .python_history
+pyrightconfig.json
 
 # Shell configs
 .oh-my-zsh/
@@ -117,3 +118,6 @@ ebooks/
 
 # Custom Cursor Rules
 **/.cursor/rules/custom_*
+
+# Compound-engineering scratch outputs (ce-review, etc.)
+.context/

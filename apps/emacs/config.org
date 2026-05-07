@@ -237,6 +237,34 @@ Save after a refile just in case
 ;;        "p" 'sxd/clipboard-image
 ;;        "k" 'sxd/remove-image))
 #+end_src
+* Navigation
+** gb / gB — jump back/forward across any cursor jump
+Evil's default is =C-o= / =C-i=, which collide with terminal. Mirror them to =gb= / =gB=.
+=better-jumper= is already on via Doom defaults and records LSP/search/imenu jumps.
+#+begin_src elisp
+(after! evil
+  (map! :nv "gb" #'better-jumper-jump-backward
+        :nv "gB" #'better-jumper-jump-forward))
+#+end_src
+
+** LSP peek — preview defs/refs without leaving point
+=lsp-ui= is enabled by default with =:tools lsp=. Peek shows a popup you can
+dismiss without modifying your jump list.
+#+begin_src elisp
+(after! lsp-ui
+  (map! :map lsp-ui-mode-map
+        :nv "gp" #'lsp-ui-peek-find-definitions
+        :nv "gP" #'lsp-ui-peek-find-references))
+#+end_src
+
+** Python LSP server required for gd/gD
+Doom's =+lsp= flag enables =lsp-mode= but does not install a server. Install one:
+#+begin_src sh :tangle no
+npm install -g pyright
+# or: pip install "python-lsp-server[all]"
+#+end_src
+Verify with =M-x lsp-doctor= in a Python buffer.
+
 * Projectile
 ** Use git superproject root instead of submodule root
 When working in a repo with submodules, projectile defaults to the submodule as the project root.

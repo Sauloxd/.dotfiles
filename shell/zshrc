@@ -270,9 +270,33 @@ export PATH="$HOME/.local/bin:$PATH"
 alias devex="cd ~/manor/manor-devex"
 alias gauth="gcloud auth application-default login"
 
+# Switch between manor-devex-N clones (one docker compose runs at a time).
+# Usage: dx 1 | dx 2 | dx 3
+dx() {
+  if [ -z "$1" ]; then
+    cat /Users/sauloxd/workspace/.active-clone 2>/dev/null || echo "no active clone"
+    return 0
+  fi
+  local target="/Users/sauloxd/workspace/manor-devex-$1"
+  if [ ! -d "$target" ]; then
+    echo "no such clone: $target" >&2
+    return 1
+  fi
+  local current
+  current=$(cat /Users/sauloxd/workspace/.active-clone 2>/dev/null)
+  if [ -n "$current" ] && [ -d "$current" ] && [ "$current" != "$target" ]; then
+    echo "stopping $current"
+    (cd "$current" && docker compose down) || return 1
+  fi
+  echo "starting $target"
+  (cd "$target" && docker compose up -d) || return 1
+  echo "$target" > /Users/sauloxd/workspace/.active-clone
+  cd "$target"
+}
+
 # Claude Code multi-account (separate config dirs)
-alias c='CLAUDE_CONFIG_DIR=~/.claude-personal claude --dangerously-skip-permissions'
-alias ac='CLAUDE_CONFIG_DIR=~/.claude-org claude --dangerously-skip-permissions'
+alias c='CLAUDE_CONFIG_DIR=~/.claude-personal claude'
+alias ac='CLAUDE_CONFIG_DIR=~/.claude-org claude'
 
 
 alias cc='claude --dangerously-skip-permissions'

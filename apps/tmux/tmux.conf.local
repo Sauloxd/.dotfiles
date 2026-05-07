@@ -4,6 +4,12 @@
 
 set -g mouse on
 
+# Use Option+Space (Meta-Space) as prefix instead of Ctrl+b
+# Requires terminal to send Option as Esc+ (iTerm2: Profiles → Keys → General → Left Option key → Esc+)
+unbind C-b
+set -g prefix M-Space
+bind M-Space send-prefix
+
 # Set new panes to open in current directory
 bind c new-window -c "#{pane_current_path}"
 bind v split-window -h -c "#{pane_current_path}"
@@ -21,10 +27,7 @@ bind-key -T copy-mode-vi MouseDown1Pane select-pane\; send-keys -X clear-selecti
 # can trigger copy-mode to exit when copy-mode is entered by MouseDrag1Pane
 bind -n MouseDrag1Pane if -Ft= '#{mouse_any_flag}' 'if -Ft= \"#{pane_in_mode}\" \"copy-mode -eM\" \"send-keys -M\"' 'copy-mode -eM'
 
-# Setting for overmind https://github.com/DarthSim/overmind/issues/155
-set-hook -g client-attached "run 'sess=\`tmux new -d -P -t \"#{session_name}\"\` && tmux switch-cli -t \"\${sess}#{window_index}\"'"
-
-set-option -g history-limit 100000
+set-option -g history-limit 20000
 
 # Enable truecolor (24-bit) support so themes render correctly
 set -ag terminal-overrides ",xterm-256color:Tc,tmux-256color:Tc"
@@ -43,7 +46,7 @@ setw -g mode-keys vi
 
 # vi-style copy to system clipboard
 bind -T copy-mode-vi v send -X begin-selection
-bind -T copy-mode-vi y send -X copy-pipe-and-cancel "xclip -selection clipboard"
+bind -T copy-mode-vi y send -X copy-pipe-and-cancel "if command -v pbcopy >/dev/null 2>&1; then pbcopy; else xclip -selection clipboard; fi"
 
 # Allow OSC 52 clipboard passthrough (Emacs tty +osc -> tmux -> iTerm2)
 set -g allow-passthrough on
@@ -53,6 +56,10 @@ set -g allow-passthrough on
 set -g @plugin 'catppuccin/tmux#v2.3.0'
 set -g @catppuccin_flavor 'mocha'
 set -g @catppuccin_window_status_style 'rounded'
+
+# Show window name (#W) instead of the default #T (pane title / running process)
+set -g @catppuccin_window_text " #W"
+set -g @catppuccin_window_current_text " #W"
 
 # Status bar modules
 set -g status-right-length 100

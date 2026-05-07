@@ -1,10 +1,12 @@
 ""ch Vim-PLug core
 "*****************************************************************************
 "
-"* Call Plug *"
-call plug#begin()
+"* Call Plug (only if vim-plug is installed) *"
+if filereadable(expand('~/.vim/autoload/plug.vim'))
+  call plug#begin()
 
-call plug#end()
+  call plug#end()
+endif
 
 set backspace=indent,eol,start " Fix backspace indent
 set encoding=UTF-8 " Encoding for vim devicons
@@ -78,7 +80,7 @@ set ttyfast
 set laststatus=2
 set showmode
 set showcmd
-set listchars=tab:‚ñ∏\ ,eol:¬¨
+set listchars=tab:▸\ ,eol:¬
 set noswapfile
 set textwidth=80
 set wrapmargin=2

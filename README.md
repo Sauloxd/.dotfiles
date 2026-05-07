@@ -24,6 +24,7 @@ cd ~/.dotfiles
 | **Zsh** | Z shell configuration |
 | **Bash** | Bash shell configuration |
 | **Claude Code** | AI coding assistant configuration (agents, commands) |
+| **lazydocker** | TUI for Docker — see [apps/lazydocker](apps/lazydocker/README.md) for usage with the `dx` clone switcher |
 
 ## Prerequisites
 
