@@ -20,7 +20,8 @@
         "a" '+fold/toggle
         "l" 'lsp-eslint-fix-all
         "t" 'minitest-verify
-        "s" 'minitest-verify-single))
+        "s" 'minitest-verify-single
+        "m" 'sxd/markdown-toggle-view))
 #+end_src
 * General
 ** Default buffer behaviour
@@ -429,6 +430,78 @@ Remember to install in correct ruby version:
 
 #+RESULTS:
 | README.md | CHANGELOG.md | Gemfile | package.json |
+
+** markdown
+Toggle between =markdown-mode= (edit) and =markdown-view-mode= (read-only rendered view).
+=markdown-view-mode= ships with =markdown-mode= and is loaded by Doom's =:lang markdown=.
+Bound to =SPC k m=.
+#+begin_src elisp
+(defun sxd/markdown-toggle-view ()
+  "Toggle between markdown-mode and markdown-view-mode in the current buffer."
+  (interactive)
+  (if (derived-mode-p 'markdown-view-mode)
+      (markdown-mode)
+    (markdown-view-mode)))
+#+end_src
+
+Scale header faces so =#=, =##=, ... visually stack like rendered HTML headings.
+Applies in both =markdown-mode= and =markdown-view-mode=.
+#+begin_src elisp
+(custom-set-faces!
+  '(markdown-header-face-1 :inherit outline-1 :weight bold :height 1.6)
+  '(markdown-header-face-2 :inherit outline-2 :weight bold :height 1.4)
+  '(markdown-header-face-3 :inherit outline-3 :weight bold :height 1.2)
+  '(markdown-header-face-4 :inherit outline-4 :weight bold :height 1.1)
+  '(markdown-header-face-5 :inherit outline-5 :weight bold :height 1.05)
+  '(markdown-header-face-6 :inherit outline-6 :weight bold :height 1.0))
+#+end_src
+
+Pixel-accurate table column alignment via =valign=. Pipes stay visible but columns
+line up perfectly. =markdown-view-mode= derives from =markdown-mode=, so this
+hook fires in both. Tables >4000 chars are skipped by default (=valign-max-table-size=).
+#+begin_src elisp
+(use-package! valign
+  :hook (markdown-mode . valign-mode))
+#+end_src
+
+*** Browser preview via JS renderer
+Render the current buffer in the browser using a self-contained web shell
+(=md-preview.html=, symlinked to =doom-user-dir=) that renders client-side with
+=markdown-it= + =highlight.js= — nicer than the default =markdown-preview= HTML.
+
+The markdown is base64-encoded and injected into the shell (no temp =.md=, no
+=file://= fetch/CORS issues, and =</script>= in the content can't break out).
+Bound over the default =SPC m p=.
+#+begin_src elisp
+(defun sxd/markdown-preview-web ()
+  "Render the current markdown buffer in the browser via md-preview.html.
+Injects the buffer (base64 UTF-8) into the web shell, writes a temp HTML
+file, and opens it with `browse-url'."
+  (interactive)
+  (let* ((shell (expand-file-name "md-preview.html" doom-user-dir))
+         (md (buffer-substring-no-properties (point-min) (point-max)))
+         (b64 (base64-encode-string (encode-coding-string md 'utf-8) t))
+         (title (let ((s (or (buffer-name) "markdown")))
+                  (dolist (pair '(("&" . "&amp;") ("<" . "&lt;") (">" . "&gt;")) s)
+                    (setq s (string-replace (car pair) (cdr pair) s)))))
+         (template (with-temp-buffer
+                     (insert-file-contents shell)
+                     (buffer-string)))
+         (html (string-replace "__MD_CONTENT__" b64
+                               (string-replace "__MD_TITLE__" title template)))
+         (out (make-temp-file "md-preview-" nil ".html")))
+    (with-temp-file out (insert html))
+    (browse-url (concat "file://" out))))
+
+(map! :after markdown-mode
+      :map (markdown-mode-map gfm-mode-map)
+      ;; Override the built-in C-c C-c preview/export-preview keys.
+      "C-c C-c p" #'sxd/markdown-preview-web
+      "C-c C-c v" #'sxd/markdown-preview-web
+      ;; And the Doom localleader entry.
+      :localleader
+      "p" #'sxd/markdown-preview-web)
+#+end_src
 
 * Claude Code IDE
 Integration with Claude Code CLI for AI-assisted coding.

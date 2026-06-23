@@ -1,0 +1,189 @@
+<!doctype html>
+<!--
+  md-preview.html — self-contained markdown preview shell.
+
+  Rendered client-side in the browser by markdown-it + highlight.js.
+  Driven by `sxd/markdown-preview-web` in config.org, which replaces the two
+  sentinels below before writing a temp file and opening it:
+
+    __MD_TITLE__    -> the file name (already HTML-escaped)
+    __MD_CONTENT__  -> the buffer's markdown, base64-encoded UTF-8
+
+  Edit the CSS here to restyle the preview; re-run `./install` is NOT needed
+  for CSS tweaks if you preview from the symlinked copy, but keep the source
+  of truth in ~/.dotfiles.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>__MD_TITLE__</title>
+
+  <!-- highlight.js themes: light for light mode, dark for dark mode -->
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github.min.css"
+        media="(prefers-color-scheme: light)">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github-dark.min.css"
+        media="(prefers-color-scheme: dark)">
+
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #1f2328;
+      --muted: #59636e;
+      --border: #d1d9e0;
+      --accent: #0969da;
+      --code-bg: #f6f8fa;
+      --quote-fg: #59636e;
+      --quote-border: #d1d9e0;
+      --table-stripe: #f6f8fa;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0d1117;
+        --fg: #e6edf3;
+        --muted: #9198a1;
+        --border: #3d444d;
+        --accent: #4493f8;
+        --code-bg: #151b23;
+        --quote-fg: #9198a1;
+        --quote-border: #3d444d;
+        --table-stripe: #151b23;
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    html { font-size: 16px; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
+                   Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .md {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 6rem;
+      overflow-wrap: break-word;
+    }
+
+    .md h1, .md h2, .md h3, .md h4, .md h5, .md h6 {
+      margin: 1.6em 0 0.6em;
+      font-weight: 600;
+      line-height: 1.25;
+    }
+    .md h1 { font-size: 2em; padding-bottom: .3em; border-bottom: 1px solid var(--border); }
+    .md h2 { font-size: 1.5em; padding-bottom: .3em; border-bottom: 1px solid var(--border); }
+    .md h3 { font-size: 1.25em; }
+    .md h4 { font-size: 1em; }
+    .md h5 { font-size: .875em; }
+    .md h6 { font-size: .85em; color: var(--muted); }
+    .md > :first-child { margin-top: 0; }
+
+    .md p { margin: 0 0 1rem; }
+
+    .md a { color: var(--accent); text-decoration: none; }
+    .md a:hover { text-decoration: underline; }
+
+    .md code {
+      font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+      font-size: .9em;
+      background: var(--code-bg);
+      padding: .2em .4em;
+      border-radius: 6px;
+    }
+    .md pre {
+      background: var(--code-bg);
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+    }
+    .md pre code {
+      background: none;
+      padding: 0;
+      font-size: .875em;
+      line-height: 1.5;
+    }
+
+    .md blockquote {
+      margin: 0 0 1rem;
+      padding: 0 1em;
+      color: var(--quote-fg);
+      border-left: .25em solid var(--quote-border);
+    }
+
+    .md ul, .md ol { padding-left: 2em; margin: 0 0 1rem; }
+    .md li + li { margin-top: .25em; }
+
+    .md table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 0 0 1rem;
+      display: block;
+      overflow-x: auto;
+    }
+    .md th, .md td { border: 1px solid var(--border); padding: .5em .9em; }
+    .md th { font-weight: 600; }
+    .md tr:nth-child(2n) { background: var(--table-stripe); }
+
+    .md img { max-width: 100%; height: auto; }
+
+    .md hr {
+      height: 1px; border: 0; margin: 2rem 0;
+      background: var(--border);
+    }
+
+    .md kbd {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: .85em;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: .15em .4em;
+      box-shadow: inset 0 -1px 0 var(--border);
+    }
+
+    .md .task-list-item { list-style: none; }
+    .md .task-list-item input { margin: 0 .5em 0 -1.4em; }
+  </style>
+</head>
+<body>
+  <article class="md" id="content">Rendering…</article>
+
+  <script src="https://cdn.jsdelivr.net/npm/markdown-it@14/dist/markdown-it.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+  <script>
+    // Sentinels are replaced by sxd/markdown-preview-web before this file is opened.
+    const MD_B64 = "__MD_CONTENT__";
+
+    function decodeB64Utf8(b64) {
+      const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+      return new TextDecoder("utf-8").decode(bytes);
+    }
+
+    const md = window.markdownit({
+      html: true,
+      linkify: true,
+      typographer: true,
+      highlight(str, lang) {
+        if (lang && window.hljs && hljs.getLanguage(lang)) {
+          try {
+            return hljs.highlight(str, { language: lang }).value;
+          } catch (_) { /* fall through */ }
+        }
+        return ""; // let markdown-it escape it
+      },
+    });
+
+    const source = decodeB64Utf8(MD_B64);
+    document.getElementById("content").innerHTML = md.render(source);
+  </script>
+</body>
+</html>
