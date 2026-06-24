@@ -12,6 +12,9 @@
     ~/.zshrc: shell/zshrc
     ~/.tmux.conf: apps/tmux/tmux.conf
     ~/.tmux.conf.local: apps/tmux/tmux.conf.local
+    ~/.config/ghostty/config:
+      path: apps/ghostty/config
+      create: true
     ~/.gitignore_global: apps/git/gitignore_global
     ~/.gitconfig: apps/git/gitconfig
     ~/.config/doom/:
@@ -20,6 +23,9 @@
       create: true
     ~/.config/karabiner/karabiner.json:
       path: apps/karabiner/karabiner.json
+      create: true
+    ~/Library/LaunchAgents/local.user.env.plist:
+      path: apps/macos/local.user.env.plist
       create: true
     ~/.claude/agents:
       path: .claude/agents

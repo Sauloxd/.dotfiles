@@ -15,8 +15,9 @@ bind c new-window -c "#{pane_current_path}"
 bind v split-window -h -c "#{pane_current_path}"
 bind V split-window -c "#{pane_current_path}"
 
-# disable "release mouse drag to copy and exit copy-mode", ref: https://github.com/tmux/tmux/issues/140
-unbind-key -T copy-mode-vi MouseDragEnd1Pane
+# on mouse-drag release: copy to system clipboard but DO NOT exit copy-mode
+# (default binding uses copy-pipe-and-cancel which exits and scrolls to bottom)
+bind-key -T copy-mode-vi MouseDragEnd1Pane send -X copy-pipe-no-clear "if command -v pbcopy >/dev/null 2>&1; then pbcopy; else xclip -selection clipboard; fi"
 
 # since MouseDragEnd1Pane neither exit copy-mode nor clear selection now,
 # let single click do selection clearing for us.
@@ -25,7 +26,7 @@ bind-key -T copy-mode-vi MouseDown1Pane select-pane\; send-keys -X clear-selecti
 # this line changes the default binding of MouseDrag1Pane, the only difference
 # is that we use `copy-mode -eM` instead of `copy-mode -M`, so that WheelDownPane
 # can trigger copy-mode to exit when copy-mode is entered by MouseDrag1Pane
-bind -n MouseDrag1Pane if -Ft= '#{mouse_any_flag}' 'if -Ft= \"#{pane_in_mode}\" \"copy-mode -eM\" \"send-keys -M\"' 'copy-mode -eM'
+bind -n MouseDrag1Pane if -Ft= '#{mouse_any_flag}' 'if -Ft= "#{pane_in_mode}" "copy-mode -eM" "send-keys -M"' 'copy-mode -eM'
 
 set-option -g history-limit 20000
 
@@ -37,16 +38,106 @@ set-environment -g COLORTERM truecolor
 # Prevent tmux from automatically renaming windows
 set-window-option -g automatic-rename off
 
+# Number windows starting at 1 (never 0) and keep them gap-free
+set -g base-index 1
+set -g renumber-windows on
+
+# When the session you're attached to is killed, switch to another session
+# instead of detaching/closing tmux (default is to detach the client).
+set -g detach-on-destroy off
+
 # Move window left/right
 bind -r < swap-window -t -1\; select-window -t -1
 bind -r > swap-window -t +1\; select-window -t +1
+
+# Option+Tab (no prefix): cycle forward through windows, always skipping the
+# "emacs" window (F1 is the dedicated emacs toggle). Logic lives in mtab.sh.
+bind -n M-Tab run-shell -b "sh ~/.dotfiles/apps/tmux/mtab.sh '#{session_name}'"
+
+# Option+` / Option+~ (no prefix): cycle sessions in top-bar order (the
+# session-level parallel to Option+Tab). Always forward (wraps around), to
+# mirror Option+Tab's always-forward window cycling. Bare Option chords are
+# taken from apps inside tmux (e.g. Emacs M-` won't reach Emacs).
+bind -n 'M-`' run-shell -b "sh ~/.dotfiles/apps/tmux/session-cycle.sh next"
+bind -n 'M-~' run-shell -b "sh ~/.dotfiles/apps/tmux/session-cycle.sh next"
+
+# F1 (no prefix): toggle to the window named "emacs"; press again to jump back
+# to wherever you came from. Does nothing if there is no "emacs" window.
+# Logic lives in emacs-toggle.sh.
+bind -n F1 run-shell -b "sh ~/.dotfiles/apps/tmux/emacs-toggle.sh '#{session_name}' '#{window_index}'"
+
+# -- Vim-style leader keymap (leader = Option+Space) --------------------------
+# Everything is under the leader so nothing is stolen from Emacs/vim/shell.
+
+# Tabs (windows)
+bind -r Tab next-window                                       # leader Tab : cycle tabs
+bind x confirm-before -p "kill window #W? (y/n)" kill-window  # leader x   : kill tab (was kill-pane)
+bind X confirm-before -p "kill pane? (y/n)" kill-pane         # leader X   : kill pane (kept)
+bind l command-prompt -I "#W" -p "rename window:" "rename-window -- '%%'"  # leader l : rename tab (was last-window)
+
+# Sessions (move between)
+bind -r '`' switch-client -n                                  # leader `   : next session
+bind -r '~' switch-client -p                                  # leader ~   : previous session
+
+# Session sub-table: leader s, then ONE key (vim-leader feel; auto-returns to root)
+bind s switch-client -T session \; display-message "session: n=new  x=kill  l=rename  s=pick  1-0=goto"
+bind -T session n command-prompt -p "new session:" "new-session -s '%%'"
+bind -T session x confirm-before -p "kill session #S? (y/n)" kill-session
+bind -T session l command-prompt -I "#S" -p "rename session:" "rename-session -- '%%'"
+bind -T session s choose-tree -Zs
+bind -T session '<' run-shell "sh ~/.dotfiles/apps/tmux/session-move.sh left"   # leader s < : move session left
+bind -T session '>' run-shell "sh ~/.dotfiles/apps/tmux/session-move.sh right"  # leader s > : move session right
+bind -T session '`'  switch-client -l                         # leader s ` : last session
+# leader s Tab : next session, and STAY in the session table so repeated Tab
+# keeps cycling (Shift+Tab goes back). Any other key drops back to normal.
+bind -T session Tab  { switch-client -n ; switch-client -T session }
+bind -T session BTab { switch-client -p ; switch-client -T session }
+# leader s <N> : jump to the Nth session in top-bar order (0 = 10th)
+bind -T session 1 run-shell "~/.dotfiles/apps/tmux/session-goto.sh 1"
+bind -T session 2 run-shell "~/.dotfiles/apps/tmux/session-goto.sh 2"
+bind -T session 3 run-shell "~/.dotfiles/apps/tmux/session-goto.sh 3"
+bind -T session 4 run-shell "~/.dotfiles/apps/tmux/session-goto.sh 4"
+bind -T session 5 run-shell "~/.dotfiles/apps/tmux/session-goto.sh 5"
+bind -T session 6 run-shell "~/.dotfiles/apps/tmux/session-goto.sh 6"
+bind -T session 7 run-shell "~/.dotfiles/apps/tmux/session-goto.sh 7"
+bind -T session 8 run-shell "~/.dotfiles/apps/tmux/session-goto.sh 8"
+bind -T session 9 run-shell "~/.dotfiles/apps/tmux/session-goto.sh 9"
+bind -T session 0 run-shell "~/.dotfiles/apps/tmux/session-goto.sh 10"
+
+# Bonus quality-of-life (easy to remove): mnemonic splits + config reload
+bind "|" split-window -h -c "#{pane_current_path}"            # leader | : split right
+bind "-" split-window -v -c "#{pane_current_path}"            # leader - : split down
+bind R source-file ~/.tmux.conf \; display-message "tmux.conf reloaded"  # leader R : reload
+
+# Help/config sub-table: leader h, then ONE key (auto-returns to root).
+bind h switch-client -T help \; display-message "help: r=reload conf"
+bind -T help r source-file ~/.tmux.conf \; display-message "tmux.conf reloaded"  # leader h r : reload
+
+# Help widget: leader then Space opens a popup menu of the main actions.
+# Pick with arrow keys + Enter, or press the letter shown. (leader ? still
+# lists ALL bindings via tmux's built-in list-keys pager.)
+bind Space display-menu -T "#[align=centre fg=#cba6f7]tmux leader" -x C -y C \
+  "next tab"        Tab  { next-window } \
+  "rename tab"      l    { command-prompt -I "#W" -p "rename window:" { rename-window -- "%%" } } \
+  "kill tab"        x    { confirm-before -p "kill window #W? (y/n)" kill-window } \
+  "split right"     |    { split-window -h -c "#{pane_current_path}" } \
+  "split down"      -    { split-window -v -c "#{pane_current_path}" } \
+  "" \
+  "next session"    '`'  { switch-client -n } \
+  "prev session"    '~'  { switch-client -p } \
+  "session picker"  S    { choose-tree -Zs } \
+  "new session"     N    { command-prompt -p "new session:" { new-session -s "%%" } } \
+  "kill session"    K    { confirm-before -p "kill session #S? (y/n)" kill-session } \
+  "rename session"  E    { command-prompt -I "#S" -p "rename session:" { rename-session -- "%%" } } \
+  "" \
+  "detach"          d    { detach-client }
 
 # vi keys in copy mode
 setw -g mode-keys vi
 
 # vi-style copy to system clipboard
 bind -T copy-mode-vi v send -X begin-selection
-bind -T copy-mode-vi y send -X copy-pipe-and-cancel "if command -v pbcopy >/dev/null 2>&1; then pbcopy; else xclip -selection clipboard; fi"
+bind -T copy-mode-vi y send -X copy-pipe-no-clear "if command -v pbcopy >/dev/null 2>&1; then pbcopy; else xclip -selection clipboard; fi"
 
 # Allow OSC 52 clipboard passthrough (Emacs tty +osc -> tmux -> iTerm2)
 set -g allow-passthrough on
@@ -75,3 +166,7 @@ if-shell '! test -d ~/.tmux/plugins/tpm' \
 # TPM (keep at the very bottom)
 set -g @plugin 'tmux-plugins/tpm'
 run '~/.tmux/plugins/tpm/tpm'
+
+# Session tab strip across the top (iTerm-like). Must run AFTER tpm so the
+# catppuccin main bar exists when we relocate it to line 1. See session-tabs.sh.
+run-shell 'sh ~/.dotfiles/apps/tmux/session-tabs.sh'

@@ -1,0 +1,41 @@
+# Ghostty configuration
+# Versioned in ~/.dotfiles/apps/ghostty/config -> symlinked to ~/.config/ghostty/config
+# Reference: https://ghostty.org/docs/config
+# Reload in-app with: Cmd+Shift+, (or just relaunch).
+
+# -- Appearance ---------------------------------------------------------------
+theme = Catppuccin Mocha
+font-family = MesloLGS NF
+font-size = 14
+# Subtle transparency + blur (comment out if you prefer fully opaque).
+background-opacity = 0.96
+background-blur = 20
+
+window-padding-x = 8
+window-padding-y = 6
+cursor-style = block
+mouse-hide-while-typing = true
+
+# -- macOS / tmux integration -------------------------------------------------
+# CRITICAL: make the Option key send Esc+ so tmux Option bindings work
+# (prefix is M-Space, plus M-Tab / F1). This mirrors iTerm2's "Left Option = Esc+".
+macos-option-as-alt = true
+
+# We drive windows/splits/tabs entirely from tmux, so keep Ghostty's chrome lean.
+# hidden = no title bar and no traffic-light buttons (close/minimize/zoom),
+# while keeping native rounded corners + borders. Tabs are disabled by macOS in
+# this mode (fine — tmux owns tabs). Move the window with Cmd+drag if needed.
+window-decoration = true
+macos-titlebar-style = hidden
+confirm-close-surface = false
+
+# Let F1 (our tmux emacs-toggle) and other function keys reach the terminal
+# rather than being captured by macOS.
+macos-non-native-fullscreen = true
+
+# -- Scrollback ---------------------------------------------------------------
+scrollback-limit = 10000000
+
+# -- Shell integration --------------------------------------------------------
+shell-integration = zsh
+shell-integration-features = cursor,sudo,title
