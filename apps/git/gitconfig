@@ -11,8 +11,8 @@
 	# View the current working tree status using the short format.
 	s = status -s
 
-	# Show repo + submodule status via scripts/git-ss.sh in the current repo.
-	ss = "!bash \"$(git rev-parse --show-toplevel)/scripts/git-ss.sh\""
+	# Open submod TUI at the current repo (see ~/workspace/submod).
+	ss = "!submod \"$(git rev-parse --show-toplevel)\""
 
 	# Checkout all submodules to a branch via scripts/git-bb.sh in the current repo.
 	bb = "!bash \"$(git rev-parse --show-toplevel)/scripts/git-bb.sh\""
@@ -166,3 +166,5 @@
 [init]
 
 	defaultBranch = main
+[pull]
+	rebase = true
