@@ -8,6 +8,9 @@ fi
 
 export ZSH="$HOME/.oh-my-zsh"
 
+# Machine-local overrides & secrets (not versioned). See ~/.zshrc.local
+[ -f ~/.zshrc.local ] && source ~/.zshrc.local
+
 export PATH="$PATH:"
 export PATH=$PATH:/usr/local/go/bin:$HOME/.emacs.d/bin:$HOME/go/bin
 export PATH="$HOME/.dotfiles/bin:$PATH"
@@ -268,7 +271,9 @@ alias ip="curl -s -w '\n' https://api.ipify.org"
 export PATH="$HOME/.local/bin:$PATH"
 
 alias devex="cd ~/manor/manor-devex"
-alias gauth="gcloud auth application-default login"
+# Re-auth Google ADC once, then propagate fresh creds to every running clone.
+# Run `gauth -h` for flags (-c check, -p propagate-only, -f force). See ~/workspace/gauth-all.sh
+alias gauth="$HOME/workspace/gauth-all.sh"
 
 # Switch between manor-devex-N clones (one docker compose runs at a time).
 # Usage: dx 1 | dx 2 | dx 3
@@ -308,3 +313,16 @@ ulimit -n 10240
 
  export PATH="$HOME/.bun/bin:$PATH"
 
+
+
+alias e2e="docker run --rm \
+    --user 0:0 \
+    --shm-size=2g --cap-add=SYS_ADMIN --init \
+    -v "$(pwd):/tests" -w /tests \
+    -e VUS=1 -e QUESTION_INDEX=0 \
+    -e FRONTEND_URL="https://norma.manor.com.br" \
+    -e FIREBASE_EMAIL="automation@manor.com.br" \
+    -e FIREBASE_PASSWORD="$FIREBASE_PASSWORD" \
+    -e K6_BROWSER_ENABLED=true \
+    -e K6_BROWSER_HEADLESS=true \
+    grafana/k6:0.56.0-with-browser run browser-load-test.js"
