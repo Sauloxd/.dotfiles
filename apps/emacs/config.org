@@ -377,6 +377,11 @@ Remember to install typescript-language-server globally
 ;; this fix was trying to enable eslint in yarn2 hell
 (setq-default enable-local-variables t)
 (setq lsp-file-watch-threshold 10000)
+;; Don't let lsp recursively watch huge generated/scraped data dirs.
+;; lsp ignores .gitignore, so it must be told explicitly or it tries to
+;; register tens of thousands of FSEvents watchers and hangs Emacs.
+(after! lsp-mode
+  (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]data\\'"))
 ;; By using these locals, we are defining
 
 ;;; Directory Local Variables
@@ -385,7 +390,9 @@ Remember to install typescript-language-server globally
 ;; inside qultureapp
 ;; https://github.com/hlissner/doom-emacs/issues/2860#issuecomment-611714320
 (after! dtrt-indent
-  (add-to-list 'dtrt-indent-hook-mapping-list '(typescript-mode javascript typescript-indent-level)))
+  (add-to-list 'dtrt-indent-hook-mapping-list '(typescript-mode javascript typescript-indent-level))
+  (add-to-list 'dtrt-indent-hook-mapping-list '(typescript-ts-mode javascript typescript-ts-mode-indent-offset))
+  (add-to-list 'dtrt-indent-hook-mapping-list '(tsx-ts-mode javascript typescript-ts-mode-indent-offset)))
 #+end_src
 
 ** eslint
